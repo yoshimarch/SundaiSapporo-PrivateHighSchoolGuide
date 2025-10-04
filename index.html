@@ -1,0 +1,1990 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>札幌私立高校受験進学情報～駿台小中学部提供～ | 入試・学習支援で学校を比較</title>
+  <meta name="description" content="北海道の高校を入試日程・学習支援・進学実績で素早く比較検討できるシステム">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    .school-card:hover { transform: translateY(-2px); }
+    .tag-chip { display:inline-flex; align-items:center; padding:0.25rem 0.5rem; border-radius:9999px; background:#f3f4f6; color:#374151; font-size:0.875rem; }
+    .fav-tip { position:absolute; top:2.25rem; right:0.5rem; z-index:10; }
+    .fav-tip-content {
+      display:none; position:absolute; right:0; top:0.5rem; max-width:18rem;
+      background:#fffbe6; border:1px solid #fde68a; color:#4b5563;
+      padding:0.5rem 0.75rem; border-radius:0.5rem; box-shadow:0 6px 24px rgba(0,0,0,.08);
+      font-size:.8rem; line-height:1.3;
+    }
+    .fav-tip:hover .fav-tip-content, .fav-tip.show .fav-tip-content { display:block; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- ヘッダー -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+      <div class="text-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">🎓 札幌私立高校受験進学情報～駿台小中学部提供～</h1>
+        <p class="text-gray-600 text-lg">北海道の高校情報を素早く比較検討できます</p>
+      </div>
+      <!-- 検索バー -->
+      <div class="mb-6">
+        <div class="relative max-w-md mx-auto">
+          <input 
+            type="text" 
+            id="search-input"
+            placeholder="学校名やコースで検索..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+      <div id="active-search" class="mt-6"></div>
+    </div>
+  </header>
+
+  <!-- メイン -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div id="filter-container-placeholder"></div>
+
+    <div id="results-stats" class="mb-6 text-center">
+      <p class="text-gray-600">
+        <span id="results-count" class="font-semibold text-blue-600">0</span>
+        <span>校の高校が見つかりました</span>
+      </p>
+    </div>
+
+    <div id="cards" class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></div>
+
+    <div id="no-results" class="hidden text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">該当する学校が見つかりませんでした</h3>
+      <p class="text-gray-500">検索条件やタグを変更してお試しください</p>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-gray-600">
+      <p class="mb-2">📊 データ更新：2025年9月 | 入試情報は各校の公式サイトで最新情報をご確認ください</p>
+      <p>🔍 問い合わせ：sugita@sundai-kyoken.jp</p>
+    </div>
+  </footer>
+
+  <script>
+    // -----------------------------
+    // 1) 学校データ（例）
+    // -----------------------------
+    const schools = [];
+
+    // 藤女子（女子校の例）
+    schools.push({
+      id: "fuji-joshi-hs-3year",
+      name: "藤女子高校（3か年コース）",
+      color: "#992299",
+      type: "私立",
+      gender: "女子校", // ★TODO: 男子校/女子校/共学 を入力
+      website: "",
+      highlights: [
+        "専願・一般ともに面接実施（寄宿生は保護者同伴）",
+        "スライド合格制度あり（特別進学↔総合進学）",
+        "一般入試優秀者に入学金相当25万円給付",
+        "姉妹校・指定校推薦が充実"
+      ],
+      admissions: {
+        rounds: [
+          { label: "専願", date: "2026-01-24",
+            note: { appweb:"", appmo:"", appsho:"", testhi:"数英", testme:"あり", testoth:"" } },
+          { label: "一般", date: "2026-02-13",
+            note: { appweb:"", appmo:"", appsho:"", testhi:"5教科", testme:"寄宿生のみ", testoth:"" } }
+        ],
+        policy: { slide:"あり", admission:"", acceptance:"", etc:"" }
+      },
+      courses: [
+        { name:"特別進学コース", description:"国公立・難関私大を目指す。" },
+        { name:"総合進学コース", description:"基礎学力の充実。" }
+      ],
+      details: {
+        access: "", dormitory:"あり（女子寮あり）", tuition:"",
+        support:"個別指導・特待制度など。", achievements:"", features:"", governance:"", recruitment:""
+      },
+      youtubelink: "HeXnwzMt4dM",
+      manualTags: [] // 任意：#共学 など手動タグ
+    });
+
+    // 札幌大谷（共学の例）
+    schools.push({
+      id: "sapporo-otani-hs",
+      name: "札幌大谷高等学校",
+      color: "#DC2626",
+      type: "私立",
+      gender: "共学", // ★TODO
+      website: "",
+      highlights: [
+        "単願入試（面接重視＋学力点検）と一般入試を実施",
+        "普通科はPS・AS（学力重点）とG（個性探求）に分かれる",
+        "音楽科・美術科は実技試験あり",
+        "グローバルスタディーズ・語学研修など"
+      ],
+      admissions: {
+        rounds: [
+          { label: "推薦", date: "2026-01-24",
+            note:{ appweb:"", appmo:"", appsho:"", testhi:"学力点検", testme:"あり", testoth:"" }},
+          { label: "一般", date: "2026-02-13",
+            note:{ appweb:"", appmo:"", appsho:"", testhi:"3教科", testme:"なし", testoth:"" }}
+        ],
+        policy: { slide:"あり", admission:"", acceptance:"", etc:"" }
+      },
+      courses: [
+        { name:"普通科 プログレッシブS（PS）", description:"国公立大・難関私大。" },
+        { name:"普通科 アスリートS（AS）", description:"部活と学習の両立。" }
+      ],
+      details: { access:"", dormitory:"なし", tuition:"", support:"", achievements:"", features:"", governance:"", recruitment:"" },
+      manualTags: []
+    });
+
+    // 東海大付属札幌（共学の例）
+    schools.push({
+      id: "tokai-univ-sapporo-hs",
+      name: "東海大学付属札幌高等学校",
+      color: "#8B5CF6",
+      type: "私立（附属）",
+      gender: "共学", // ★TODO
+      website: "",
+      highlights: [
+        "推薦・1月単願（1/16）、2月単願・一般（2/13）",
+        "スライド合格あり（1月単願のスライド者は2月一般で特別進学コース再チャレンジ可）",
+        "総合進学／特別進学の2コース制",
+        "東海大学の附属校"
+      ],
+      admissions: {
+        rounds: [
+          { label:"推薦・1月単願", date:"2026-01-16",
+            note:{ appweb:"", appmo:"", appsho:"", testhi:"推薦：面接／1月単願：国数英", testme:"推薦：あり／単願：なし", testoth:"スライド合格あり" } },
+          { label:"2月単願・一般", date:"2026-02-13",
+            note:{ appweb:"", appmo:"", appsho:"", testhi:"5教科", testme:"—", testoth:"プレテストなし" } }
+        ],
+        policy: { slide:"あり（1月→2月再チャレンジ可）", admission:"", acceptance:"", etc:"" }
+      },
+      courses: [
+        { name:"特別進学コース", description:"国公立・難関私大を目指す。" },
+        { name:"総合進学コース", description:"文武両道。東海大推薦制度あり。" }
+      ],
+      details: {
+        access:"", dormitory:"", tuition:"",
+        support:"部活動奨励奨学金など。", achievements:"", features:"附属ネットワーク等。",
+        governance:"", recruitment:"募集定員280名（特進80／総合200）"
+      },
+      manualTags:[]
+    });
+
+    
+    schools.push(
+      {
+        id: "sapporo-nichidai-hs",
+        name: "札幌日大高校",
+        color: "#0F766E",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "",
+        highlights: [
+          "推薦Ⅰ～Ⅲ、一般、帰国生・外国人入試を実施",
+          "SSH・SGH指定校、探究活動が充実",
+          "男子寮・女子寮あり、日本大学附属校",
+          "学習特待・部活特待・東西南北特待制度あり"
+        ],
+        admissions: {
+          rounds: [
+            { label: "推薦Ⅰ【専願】", date: "2026-01-24", note:{
+            appweb:"2025年12月1日(月)～2026年1月15日(木)",
+            appmo:"2025年12月1日(月)～2026年1月15日(木)/15,000円",
+            appsho:"2025年12月15日(月)～2026年1月16日(金)17:00（12月27日～1月4日を除く）/入学願書･個人調査書･自己推薦書",
+            testhi:"プレミアSとIBは国数理社英｜各50分100点、特進はなし",
+            testme:"あり",
+            testoth:"総合進学は対象外、他校への出願は可能"}},
+            { label: "推薦Ⅱ【単願】", date: "2026-01-24", note:{
+            appweb:"2025年12月1日(月)～2026年1月15日(木)",
+            appmo:"2025年12月1日(月)～2026年1月15日(木)/15,000円",
+            appsho:"2025年12月15日(月)～2026年1月16日(金)17:00（12月27日～1月4日を除く）/入学願書･個人調査書･自己推薦書",
+            testhi:"なし",
+            testme:"あり",
+            testoth:"総合進学のみ対象、作文試験あり（600字程度･50分）"}},
+            { label: "推薦Ⅲ【併願】", date: "2026-01-24", note:{
+            appweb:"2025年12月1日(月)～2026年1月15日(木)",
+            appmo:"2025年12月1日(月)～2026年1月15日(木)/15,000円",
+            appsho:"2025年12月15日(月)～2026年1月16日(金)17:00（12月27日～1月4日を除く）/入学願書･個人調査書･自己推薦書",
+            testhi:"国数理社英｜各50分100点",
+            testme:"IBのみあり",
+            testoth:"総合進学は対象外、公立含む他校との併願が可能"}},
+            { label: "一般", date: "2026-02-13", note: {
+            appweb:"2025年12月1日(月)～2026年2月3日(火)",
+            appmo:"2025年12月1日(月)～2026年2月3日(火)/15,000円",
+            appsho:"2025年12月15日(月)～2026年2月5日(木)17:00（12月27日～1月4日を除く）/入学願書･個人調査書",
+            testhi:"国数理社英｜各50分100点",
+            testme:"IBのみあり",
+            testoth:""}}
+          ],
+          policy: {slide:"あり。",
+                  admission:"推薦Ⅰ専願は他校出願可・進学不可。推薦Ⅱ単願は他校出願不可/強化指定クラブは学習点206点以上で出願可/全国大会入賞レベルについては別途出願特例あり。推薦Ⅲ併願は公立推薦・高専・私立B日程等との併願可。",
+                  acceptance:"合格ライン：PSコース例年80％。",
+                  etc:"推薦入試で入寮優先。プレミアSは当日点のみで判定、特進・総合は内申＋当日点。推薦再受験は格上げのみ。入学手続きは2026年3月19日まで（公立一般入試：2026年3月4日）"
+          }
+        },
+        courses: [
+          { name: "プレミアSコース", description: "最難関大を目指す。入試当日点のみで合否判定。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "特進コース", description: "国公立大・有名私大を目指す。SSH・SGH探究活動あり。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "総合進学コース", description: "基礎学力と部活動・自己表現を重視。推薦Ⅱ単願対象。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "国際バカロレア（IB）コース", description: "英語面接あり。国際的大学進学を視野に。募集50名。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "あり",
+          tuition: "",
+          support: "学習特待：A370点以上（入学金＋授業料全額）、B350-369点（入学金＋授業料半額）。部活特待：A全額、B半額。東西南北特待（札幌東西南北合格者対象）：入学金＋授業料全額。",
+          achievements: "",
+          features: "募集定員364名（PS25・特進169・総合120・IB50）。2025年度入学者375名。強化指定クラブ（野球・サッカー・剣道・柔道・男子バスケ・スキー・陸上長距離・吹奏楽）は学習点に配慮あり（推薦Ⅱ単願）。未来創造力を育む研究（SSH,SGH,総合的な探求の時間）。校長：浅利剛之。附属推薦・国公立併願あり。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+    schools.push(
+      {
+        id: "hokusei-joshi-hs",
+        name: "北星学園女子高等学校",
+        color: "#7C3AED",
+        type: "私立",
+        gender: "女子校", // ★TODO
+        website: "",
+        highlights: [
+          "専願（1/17）・一般（2/17）入試を実施",
+          "4コース制（Academic・Pioneer・Globalist・Music）",
+          "第2希望制度あり（不合格時に他コース判定）",
+          "Globalistコースは英語重視（得点65%以上）"
+        ],
+        admissions: {
+          rounds: [
+            { label: "専願", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月9日(金)",
+            appmo:"2025年12月1日(月)～2026年1月9日(金)/16,000円",
+            appsho:"2025年12月15日(月)～2026年1月13日(火)/入学願書･個人調査書",
+            testhi:"なし",
+            testme:"あり",
+            testoth:"MusicコースPerformanceは実技認定会合格者のみ"}},
+            { label: "一般", date: "2026-02-17", note:{
+            appweb:"2025年12月1日(月)～2026年2月2日(月)",
+            appmo:"2025年12月1日(月)～2026年2月2日(月)/16,000円",
+            appsho:"2025年12月15日(月)～2026年2月5日(木)17:00/入学願書･個人調査書",
+            testhi:"国数理社英(リスニングあり)｜各50分100点",
+            testme:"なし",
+            testoth:"MusicコースPerformanceは2/18に実技試験あり"} }
+            
+          ],
+          policy: {slide:"あり。",
+                  admission:"専願は他校出願不可。一般は他校出願可。欠席14日以内、3年間に評定1なし。",
+                  acceptance:"Academic60％以上（50〜59％はPioneer/Musicにスライド）、Pioneer50％以上、Globalist60％以上かつ英語65％以上（50〜59％はPioneer/Musicへスライド）、Music50％以上かつ実技合格（50〜59％はPioneerへスライド）。",
+                  etc:"専願は1/17(金)～1/22(水)、一般は2/3(月)～2/14(金)にWeb出願。"
+          }
+        },
+        courses: [
+          { name: "Academicコース", description: "難関大進学を目指す。英数国に重点。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "専願D", general: "一般C以上（条件付き）" }]
+          },
+          { name: "Pioneerコース", description: "幅広い進学先を目指す基礎学力充実コース。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "専願F", general: "一般E以上（条件付き）" }]
+          },
+          { name: "Globalistコース", description: "英語力重視。出願条件・合格条件ともに英語成績が鍵。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "専願D", general: "一般C以上（条件付き）" }]
+          },
+          { name: "Musicコース", description: "音楽専門教育＋大学進学。実技試験あり。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "専願F", general: "一般E以上（条件付き）" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "第2希望制度あり。合格点に届かなくても条件付きで他コースに合格判定される仕組み。",
+          achievements: "",
+          features: "募集定員：Academic40名、Pioneer110名、Globalist70名、Music30名。入学後にコース転換制度あり（4年生12月試験＋補習履修）。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+    schools.push(
+      {
+        id: "hokkaido-kagaku-hs",
+        name: "北海道科学大学高等学校",
+        color: "#1A73E8",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "",
+        highlights: [
+          "特別進学コースと進学コースを設置",
+          "単願は作文＋面接＋調査書で判定、一般は5教科試験",
+          "単願合格者も一般入試を受験し特待・特進チャンスあり",
+          "特待生制度あり（授業料全額または半額免除）"
+        ],
+        admissions: {
+          rounds: [
+            { label: "単願", date: "2026-01-24", note:{
+            appweb:"2025年12月1日(月)～2026年12月31日(水)",
+            appmo:"2025年12月1日(月)～2026年12月31日(金)/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月9日(金)16:00/入学願書･個人調査書(･入学金免除申請書)",
+            testhi:"合否には関わらないものの2/13に国数理社英(リスニングあり)｜各50分100点学力レベル確認テストあり",
+            testme:"あり",
+            testoth:"作文（600字程度･45分）"}},
+            { label: "一般", date: "2026-02-13", note:{
+            appweb:"2025年12月1日(月)～2026年1月31日(土)",
+            appmo:"2025年12月1日(月)～2026年1月31日(土)/16,000円",
+            appsho:"2025年1月26日(月)～2026年2月5日(木)16:00/入学願書･個人調査書(･入学金免除申請書)",
+            testhi:"国数理社英(リスニングあり)｜各50分100点",
+            testme:"なし",
+            testoth:""}}
+          ],
+          policy: {slide:"あり。",
+                  admission:"欠席30日以内（超過は理由書、50日以上は個別入試相談会に参加必須）。",
+                  acceptance:"",
+                  etc:""
+          }
+        },
+        courses: [
+          { name: "特別進学コース", description: "C以上が出願目安。高い学力を求め、大学進学に直結する教育。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "C以上", general: "C以上" }]
+          },
+          { name: "進学コース", description: "D以上が出願目安。基礎学力を重視し、多様な進路に対応。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "D以上", general: "D以上" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "単願特待：A帯は入学金全額免除＋授業料全額給付、B帯は入学金半額免除＋授業料半額給付。一般特待：A帯または80％以上または上位30位以内は全額免除、B帯または70％以上または上位100位以内は半額免除。",
+          achievements: "",
+          features: "2025年度入学者は特進でB・Cが7割、進学でD・Eが6割を占めた。出願はWeb。"
+        ,
+      governance: "",
+      recruitment: ""},
+      youtubelink: "j5xg-YjQ8UE"
+      }
+    );
+
+    schools.push(
+      {
+        id: "hokkai-gakuen-sapporo-hs",
+        name: "北海学園札幌高校",
+        color: "#2F855A",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "https://mirai-compass.net/usr/hokkaigh/common/login.jsf",
+        highlights: [
+          "2026年度より推薦入試廃止、専願・クラブ・一般の3形態",
+          "特進・総進・グローバル・メディカルプレップの多様なコース",
+          "北海学園大学や日本医療大学との高大連携あり",
+          "英検2級取得者は奨学金対象、グローバルコース推薦あり"
+        ],
+        admissions: {
+          rounds: [
+            { label: "専願", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月7日(水)",
+            appmo:"2025年12月1日(月)～2026年1月7日(水)/15,000円",
+            appsho:"2025年1月7日(水)～2026年1月9日(金)16:00/入学願書･個人調査書",
+            testhi:"合否には関わらないものの2/13に国数理社英(リスニングなし)｜各50分100点の学科試験を実施",
+            testme:"あり",
+            testoth:""}},
+            { label: "クラブ入学", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月7日(水)",
+            appmo:"2025年12月1日(月)～2026年1月7日(水)/15,000円",
+            appsho:"2025年1月7日(水)～2026年1月9日(金)16:00/入学願書･個人調査書･健康診断書(体育系クラブのみ)",
+            testhi:"合否には関わらないものの2/13に国数理社英(リスニングなし)｜各50分100点の学科試験を実施",
+            testme:"あり",
+            testoth:"【対象クラブ】野球･ゴルフ･スキー･サッカー･相撲･バドミントン･フィールドホッケー･テニス･少林寺拳法･弁論･吹奏楽"}},
+            { label: "一般", date: "2026-02-13", note:{
+            appweb:"2025年12月1日(月)～2026年1月30日(金)",
+            appmo:"2025年12月1日(月)～2026年1月30日(金)/15,000円",
+            appsho:"2025年1月13日(火)～2026年2月5日(木)16:00/入学願書･個人調査書",
+            testhi:"国数理社英(リスニングなし)｜各50分100点",
+            testme:"なし",
+            testoth:""}},
+          
+          ],
+          policy:{slide:"",
+                  admission:"欠席30日以内（超過は理由書）。3年次欠席10日以内（超過は理由書）。クラブ入試は顧問推薦書と健康診断書が必須。176以上で必ず活動を継続すること。",
+                  acceptance:"基準外でもGランク65%以上、Hランク75%以上で合格可能。",
+                  etc:"専願・クラブは12/1(月)～1/7(水)、一般は12/1(月)～1/30(木)にWeb出願。"
+          }
+        },
+        courses: [
+          { name: "特進コース", description: "国公立大合格を目指す。各学年2クラス、講習や大学訪問あり。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "学習点245以上または236以上＋国数英評定4以上", general: "245以上（または236＋条件）"}]
+          },
+          { name: "総進コース", description: "幅広い進路実現。併設校推薦・総合型選抜対応。多数のクラス編成。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "200以上", general: "196以上"}]
+          },
+          { name: "グローバルコース", description: "英語力強化。2年次から1クラス。米国ポートランド研修、英検準1級・2級取得目標。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: ""}]
+          },
+          { name: "メディカルプレップコース", description: "医療系進学を目指す。2年次から1クラス。日本医療大学・北海道医療大学等への推薦多数。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: ""}]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "奨学金：第Ⅱ種（特進専願・クラブA/Bランク合格者に15万円）、第Ⅲ種（5万円、条件あり）。英検2級取得者はグローバルコース希望で奨学金対象。他に北海学園奨学生（第1種6万、森本正夫記念9.6万）、特待生（次年度授業料免除）。",
+          achievements: "",
+          features: "2025年度入学者：特進72名、総進338名。2025年度合格者：推薦14、専願204、クラブ11、一般181。部活動は吹奏楽・陸上・フィールドホッケー・男子バドミントン・少林寺拳法・テニス・スキー・ゴルフ・競技かるた・美術が全国レベル。WWL事業採択校。北海学園大学の工学部、北海商科大学、日本医療大学に行く機会あり。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+    schools.push(
+      {
+        id: "sapporo-yamanote-hs",
+        name: "札幌山の手高等学校",
+        color: "#E67E22",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "",
+        highlights: [
+          "自己推薦・単願・一般・夢チャレンジ入試を実施",
+          "アカデミック・プログレス・スポーツ健康・未来デザインの4コース制",
+          "夢チャレンジ制度で意欲重視の入試、奨学生制度あり",
+          "部活動が盛ん（女子バスケ全国3位、吹奏楽東日本大会金賞）"
+        ],
+        admissions: {
+          rounds: [
+            { label: "【全日制】自己推薦", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月12日(月)",
+            appmo:"2025年12月1日(月)～2026年1月12日(月)/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月14日(水)/入学願書･個人調査書･自己推薦書(･欠席理由書)",
+            testhi:"希望者のみ2/13に国数英｜各50分100点の学力確認試験を受験可",
+            testme:"あり",
+            testoth:""}},
+            { label: "【全日制】単願", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月12日(月)",
+            appmo:"2025年12月1日(月)～2026年1月12日(月)/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月14日(水)/入学願書･個人調査書",
+            testhi:"希望者のみ2/13に国数英｜各50分100点の学力確認試験を受験可",
+            testme:"あり",
+            testoth:""}},
+            { label: "【全日制】一般", date: "2026-02-13", note:{
+            appweb:"2025年12月1日(月)～2026年2月3日(火)",
+            appmo:"2025年12月1日(月)～2026年2月3日(火)/16,000円",
+            appsho:"2025年1月19日(月)～2026年2月5日(木)/入学願書･個人調査書",
+            testhi:"国数(理社)英｜各50分100点 ※理社はアカデミック/プログレスコースのみ",
+            testme:"なし",
+            testoth:""}},
+            { label: "【全日制】夢チャレンジ制度(単願)※12/2までに事前エントリー必須", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月12日(月)",
+            appmo:"2025年12月1日(月)～2026年1月12日(月)/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月14日(火)/入学願書･個人調査書",
+            testhi:"希望者のみ2/13に国数英｜各50分100点の学力確認試験を受験可",
+            testme:"出願許可を得るために面談を2回実施",
+            testoth:"2/17は作文（400字以内）のみ実施。ただし12/2までに事前エントリーし、面談＋課題提出が必須※詳細はHP参照"}},
+            { label: "【定時制】単願※12/1までに事前エントリー必須", date: "2026-01-17", note:{
+            appweb:"2025年12月1日(月)～2026年1月12日(月)",
+            appmo:"2025年12月1日(月)～2026年1月12日(月)/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月14日(火)/入学願書･個人調査書",
+            testhi:"なし",
+            testme:"あり",
+            testoth:"試験は13時半～。事前のエントリー、三者面談および二者面談が必須"}},
+            { label: "【定時制】一般", date: "2026-02-13", note:{
+            appweb:"2025年12月1日(月)～2026年2月3日(火)",
+            appmo:"2025年12月1日(月)～2026年2月3日(火)/16,000円",
+            appsho:"2025年1月19日(月)～2026年2月5日(木)/入学願書･個人調査書",
+            testhi:"なし",
+            testme:"あり",
+            testoth:"試験は14時～"}}
+          ],
+          policy: {slide:"",
+                  admission:"出席状況良好で欠席30日以内（超過は理由書要）。",
+                  acceptance:"",
+                  etc:"自己推薦は自己推薦書提出＋面接。夢チャレンジは面談2回を経て出願許可を得る方式。"
+          }
+        },
+        courses: [
+          { name: "アカデミックコース", description: "難関国公立大を目指す。駿台予備校提携、7時間授業、少人数制。クラブ制限あり。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "プログレスコース", description: "国公立・私大を目指す。部活動参加可能。推薦型・総合型入試に対応。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "スポーツ健康コース", description: "強化指定クラブ所属が条件。学業と両立し進学・就職を目指す。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "未来デザインコース", description: "探究活動を重視し、2人担任制で個別対応。興味に応じた進路設計。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "昼間定時制課程", description: "学年制で3年卒業可。1日4時間授業。学校行事重視、部活動不可。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "自己推薦奨学：アカデミックDで入学金＋授業料全額免除など、ランク別給付あり。夢チャレンジ奨学：入学金半額給付。入試上位者奨学：国数英上位30位以内で全額、70位以内で半額。独自支援金：通学（月5000円）、留学（5万円）、英検2級以上（5万円）。",
+          achievements: "アカデミック進学実績：室蘭工業大、弘前大、鳥取大など。プログレス進学実績：北教大、小樽商科大、北見工大、室蘭工大など。就職率10年連続100%。",
+          features: "部活動は体育・文化系16クラブ。女子バスケ全国3位、吹奏楽金賞。75％が部活所属。出願状況：2025年度単願アカ1・プログ23・スポ健126・未来110／併願アカ4・プログ78・スポ健25・未来383。入学者：アカ2・プログ31・スポ健128・未来118。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+    schools.push(
+      {
+        id: "rakuno-gakuen-towa-no-mori-san-ai-hs", 
+        name: "酪農学園大学附属とわの森三愛高等学校",
+        color: "#1A73E8",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "https://mirai-compass.net/usr/hsnaih/common/login.jsf",
+        highlights: [
+          "推薦・単願（1/23）と一般（2/17）の入試を実施",
+          "普通科4コース＋アグリクリエイト科（酪農専攻は全寮制）",
+          "強化指定部を擁するトップアスリート健康コース",
+          "入学金免除や年間給付の学費支援が充実"
+        ],
+        admissions: {
+          rounds: [
+            { label: "推薦", date: "2026-01-23", note:{
+            appweb:"2025年12月1日(月)～2026年1月15日(木)23:59",
+            appmo:"2025年12月1日(月)～2026年1月15日(木)23:59/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月16日(金)/入学願書･個人調査書･推薦書(･特待に関わる書類･欠席理由書)",
+            testhi:"なし",
+            testme:"あり",
+            testoth:"作文（800字程度･60分）"} },
+            { label: "単願", date: "2026-01-23", note: {
+            appweb:"2025年12月1日(月)～2026年1月15日(木)23:59",
+            appmo:"2025年12月1日(月)～2026年1月15日(木)23:59/16,000円",
+            appsho:"2025年1月5日(月)～2026年1月16日(金)/入学願書･個人調査書(･特待に関わる書類･欠席理由書)",
+            testhi:"国数英｜各45分100点",
+            testme:"あり",
+            testoth:""} },
+            { label: "一般", date: "2026-02-17", note:{
+            appweb:"2025年12月1日(月)～2026年2月4日(水)23:59",
+            appmo:"2025年12月1日(月)～2026年2月4日(水)23:59/16,000円",
+            appsho:"2025年12月1日(月)～2026年2月5日(木)/入学願書･個人調査書(･特待に関する書類･欠席理由書)",
+            testhi:"国数英｜各50分100点",
+            testme:"なし",
+            testoth:""} }
+          ],
+          policy: {slide:"",
+                  admission:"全入試共通で欠席は3年間30日以内（超過は理由書）。トップアスリート健康コースは強化指定部顧問の事前確認が必要。",
+                  acceptance:"",
+                  etc:"通信制は内申・欠席不問で事前面談必須。"
+          }//"全入試共通で欠席は3年間30日以内（超過は理由書）。トップアスリート健康コースは強化指定部顧問の事前確認が必要。合格目安：特進GROW-UPは推C・単E・一般C程度、総合・フードは推F・単H・一般F程度、トップアスリートはE程度、機農は推G・単H・一般F程度（要相談条件あり）。通信制は内申・欠席不問で事前面談必須。"
+        },
+        courses: [
+          { name: "普通科 特進GROW-UP（獣医・理系専攻）", description: "高大連携や道内研修で理数・獣医学系を強化。進路：獣医学部・国公立大など。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "普通科 特進GROW-UP（文系専攻）", description: "英数国を重視し国際交流を通じて英語力・国際感覚を育成。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "普通科 総合進学コース", description: "探究基礎・探究活用で実践力を育む。幅広い進学・就職に対応。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "普通科 フードクリエイトコース", description: "栽培から加工・販売まで実践。食・栄養・流通を学ぶ。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "普通科 トップアスリート健康コース", description: "強化指定部限定。健康栄養学・スポーツ理論で全国レベルを目指す。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "アグリクリエイト科 機農コース（酪農専攻）", description: "全寮制。多様な牛飼養と高大連携授業、全国での校外実習。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "アグリクリエイト科 機農コース（作物園芸専攻）", description: "温室・水稲など都市近郊型栽培を学ぶ。内部進学・推薦が充実。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "推C", general: "単E、一般C程度"}]
+          },
+          { name: "通信制課程（普通科・農食環境科学科）", description: "通学・通信の選択制。担任制で進路支援（面談必須）。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          }
+        ],
+        details: {
+          access: "スクールバス（大曲・平岡、平岡・清田・大谷地、上江別・野幌方面）を平日運行（全日制推薦・単願入学者のみ、無料）。",
+          dormitory: "あり",
+          tuition: "入学金：推薦・単願13万円、一般26万円。授業料（月額）3万5000円。寮費（月額）8万0300円。入寮金6万円。",
+          support: "推薦・単願受験者は入学金半額免除。同窓生は入学金免除。成績・コース別給付：特進A〜Cは入学金免除＋年12万円、D・Eは年6万円上限。総合・フードA・Bは入学金免除＋年12万円、Cは入学金免除＋年6万円、D・Eは年6万円上限。機農A〜Dは入学金免除＋年15万円上限、Eは入学金半額＋年10万円上限。農家子弟は入学金半額、トップアスリートは入学金免除、同時在籍兄弟姉妹は年6万円上限給付。",
+          achievements: "",
+          features: "強化指定部：男子サッカー・バレー・ソフトテニス・硬式野球、女子バドミントン・ソフトテニス・バスケットボール・ソフトボール等。男子・女子寮あり。主な併願校：琴似工業・西陵・札幌工業・あすかぜ・丘珠・稲雲。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+    schools.push(
+      {
+        id: "sapporo-shinyo-hs",
+        name: "札幌新陽高等学校",
+        color: "#DC2626",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "",
+        highlights: [
+          "単願（1/24）・一般（2/13）・自己推薦特待（9/27）・パスポート制度あり",
+          "アカデミア・クエスト・パイオニアの多様なコース設定",
+          "探求学習や大学ゼミとの連携、キャリア・コンサルタント配置",
+          "特待生制度が豊富（自己推薦・部活動・パスポート・オープンスクール）"
+        ],
+        admissions: {
+          rounds: [
+            { label: "単願", date: "2026-01-24", note:{
+            appweb:"2025年12月1日(月)12:00～2026年1月16日(金)23:59",
+            appmo:"2025年12月1日(月)12:00～2026年1月16日(金)23:59/15,000円",
+            appsho:"2025年12月19日(金)10:00～2026年1月19日(月)16:00/入学願書･個人調査書等",
+            testhi:"なし",
+            testme:"あり※保護者同伴",
+            testoth:"筆記課題として作文（400~600字）を出題"} },
+            { label: "一般", date: "2026-02-13", note: {
+            appweb:"2025年12月1日(月)12:00～2026年2月2日(月)23:59",
+            appmo:"2025年12月1日(月)12:00～2026年2月2日(月)23:59/15,000円",
+            appsho:"2025年1月16日(金)10:00～2026年2月5日(木)16:00/入学願書･個人調査書等",
+            testhi:"なし",
+            testme:"あり※受験生のみ",
+            testoth:"筆記課題として作文（400~600字）が出題"} },
+          ],
+          policy: {slide:"",
+                  admission:"３年生の欠席が10日以内（超過は理由書必須）。３年生の評定に1がないこと。部活動特待は顧問推薦必須。パスポート、自己推薦特待認定の受験生は条件なし",
+                  acceptance:"得点率6割程度。",
+                  etc:"自己推薦特待は9/27(金)に面接。パスポートは7/1〜8/30（Ⅰ期）、9/8〜10/25（Ⅱ期）に申請。自己推薦特待/パスポート制度認定者は当日の筆記課題免除"
+          }
+        },
+        courses: [
+          { name: "アカデミア（アドバンス）", description: "Dランク以上。難関進学対応。主要教科に評定5が必要。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Dランク以上で主要教科に評定5が2つ以上", general: "" }]
+          },
+          { name: "アカデミア（ジェネリック）", description: "Fランク以上。主要教科に評定4が必要。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Fランク以上で評定4が2つ以上", general: "" }]
+          },
+          { name: "クエスト", description: "Gランク以上。探求型学習を重視。9教科に評定5が必要。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Gランク以上で9教科に評定5が1つ以上", general: "" }]
+          },
+          { name: "パイオニア", description: "Hランク以上。幅広い進路に対応。9教科に評定4が必要。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Hランク以上で9教科に評定4が1つ以上", general: "" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "特待制度：部活動特待（顧問推薦・ランク条件で筆記免除・入学金免除・奨学金10万）、自己推薦特待（筆記免除・入学金免除・奨学金20万）、パスポート認定（筆記免除・入学金半額免除）、オープンスクール特待（入学金半額免除）、新陽特待（一般優秀者は入学金減免）。奨学金：後援会奨学金、進路探求奨学金、探求型留学奨学金。",
+          achievements: "",
+          features: "定員280名。留学単位認定（最大36単位）、特色ある選択授業（e-Sports・澄川学・アウトドア探求・Google演習）あり。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+
+
+schools.push(
+  {
+    id: "sapporo-kosei-hs",
+    name: "札幌光星高等学校",
+    color: "#F59E0B",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "",
+    highlights: [
+      "専願（1/24）・一般（2/13）の入試を実施",
+      "ステラ（最難関）・マリス（国公立/難関私大）2コース制",
+      "カトリック精神に基づいた全人的教育と国際教育プログラム",
+      "特待制度（A特待：入学金＋授業料免除、B特待：入学金免除）"
+    ],
+    admissions: {
+      rounds: [
+        { 
+          label: "専願", 
+          date: "2026-02-13", 
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月12日(月)",
+            appmo: "2025年12月1日(月)～2026年1月12日(月)/16,000円",
+            appsho: "2025年1月13日(火)～2026年1月19日(月)必着/入学願書･個人調査書等",
+            testhi: "国数英｜各50分100点",
+            testme: "あり※受験生のみ",
+            testoth: ""
+          }
+        },
+        { 
+          label: "一般", 
+          date: "2026-01-24", 
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月30日(金)",
+            appmo: "2025年12月1日(月)～2026年1月30日(金)/16,000円",
+            appsho: "2026年1月27日(火)～2026年2月5日(木)必着/入学願書･個人調査書",
+            testhi: "国数英理社｜各50分100点",
+            testme: "なし",
+            testoth: ""
+          }
+        }
+      ],
+      policy: { 
+        slide: "あり（ステラ受験者が基準未満でもマリス基準突破でマリス合格）。",
+        admission: "専願は他校出願不可。一般は他校出願可。欠席30日以内（超過は理由書）。",
+        acceptance: "ステラ：筆記400点以上。マリス：学習点＋筆記総合判定または筆記300点以上。",
+        etc: "専願は12/1(月)～1/12(月・祝)、一般は12/1(月)～1/30(金)にWeb受付。"
+      }
+    },
+    courses: [
+      { 
+        name: "マリスコース", 
+        description: "北大をはじめとする国公立・難関私大を目指す。文武両道を支援。8クラス。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "専願2/3（学習点276以上等）", 
+            general: "一般（学習点＋筆記総合判定または筆記300点以上）"
+          }
+        ]
+      },
+      { 
+        name: "ステラコース", 
+        description: "東大・京大・医学部など最難関を目指す。放課後講習必修。1クラス。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "専願1（学習点296以上等）", 
+            general: "一般（筆記400点以上）"
+          }
+        ]
+      }
+    ],
+    details: {
+      access: "",
+      dormitory: "あり（男子のみ30名、専願合格者優先）",
+      tuition: "受験料16000円。A特待で入学金30万円＋授業料免除。B特待で入学金30万円免除。学期ごとに継続審査あり。",
+      support: "A特待：専願1合格者全員、専願2/3高得点者（80%以上）、一般420点程度。B特待：専願2合格者全員、専願3高得点者、一般400点程度。奨学金：カトリック・マリア会・セント・ジョセフ奨学育英基金など。",
+      achievements: "ステラ進学実績：東大、京大、札幌医科大、北大、国際教養大など。マリス進学実績：北大、札幌医科大、北海道教育大、小樽商科大、弘前大、早稲田大、上智大、明治大、青学大、立教大など。",
+      features: "全人的教育（カトリック精神）。国際教育プログラム（Global Studies Program、豪州短期留学、海外姉妹校連携）。上智大学・北海道医療大学と高大連携。部活動は全国大会レベル（サッカー、テニス、陸上、フェンシング、吹奏楽、クラシックギター等）。"
+    ,
+      governance: "",
+      recruitment: ""}
+  }
+);
+
+    schools.push(
+      {
+        id: "sapporo-daiichi-hs",
+        name: "札幌第一高等学校",
+        color: "#EF4444",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "https://www.kibou.ac.jp/daiichi/admission/web_entry/",
+        highlights: [
+          "2026年度からコース名称刷新（東大・医進Excellence、Liberal arts、Ambitious）",
+          "推薦入試（国数英＋面接）・一般入試（5教科）",
+          "スライド合格あり（推薦は第3希望まで判定）",
+          "土曜授業を2026年度から毎週実施",
+          "ニュージーランドターム留学や海外修学旅行など英語教育に強み"
+        ],
+        admissions: {
+          rounds: [
+            { label: "推薦", date: "2026-01-24", note: {
+            appweb:"2025年12月1日(月)0:00～2026年1月12日(月)23:59",
+            appmo:"2025年12月1日(月)0:00～2026年1月12日(月)23:59/16,000円",
+            appsho:"2025年12月1日(月)9:00～2026年2月5日(木)17:00必着/入学願書･個人調査書･自己推薦書等",
+            testhi:"国数英｜国数は各50分150点,英は200点",
+            testme:"あり※受験生のみ",
+            testoth:""}},
+            { label: "一般", date: "2026-02-17", note: {
+            appweb:"2025年12月1日(月)0:00～2026年1月31日(土)23:59",
+            appmo:"2025年12月1日(月)0:00～2026年1月31日(土)23:59/16,000円",
+            appsho:"2025年1月16日(金)10:00～2026年2月5日(木)16:00/入学願書･個人調査書等",
+            testhi:"国数英理社｜各50分100点",
+            testme:"あり※過年度中学校卒業者のみ",
+            testoth:""} },
+          ],
+          policy: {slide:"あり。",
+                  admission:"欠席3年間30日以内（超過は理由書）。専願は他校出願可だが、合格後必ず入学。",
+                  acceptance:"",
+                  etc:"受験料16,000円"
+          }
+        },
+        courses: [
+          { name: "東大・医進Excellenceコース", description: "東大や医学科を目指す。習熟度別クラス（シリウス／ポラリス）を設置。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Aランク", general: "" }]
+          },
+          { name: "Liberal artsコース", description: "北海道大学をはじめ難関国公立大学進学を目指す。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Bランク", general: "" }]
+          },
+          { name: "Ambitiousコース", description: "国公立大学や難関私大合格を目指す。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "Cランク", general: "" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "なし",
+          tuition: "入学金16万円程度（特待で免除あり）。",
+          support: "特待制度：自己推薦特待（入学金全額）、S特待（入学金＋授業料3年）、A特待（入学金＋授業料1年）、B特待（入学金全額）、C特待（入学金半額）、在校生学力特待（授業料1年）、クラブ特待（入学金全額または半額）。",
+          achievements: "国公立大211名、難関私大90名、医学部医学科6名、獣医学科6名合格。北海道大学33名合格。早稲田、明治、中央、法政など難関私大合格。指定校推薦枠多数。",
+          features: "毎週土曜授業あり。ニュージーランドターム留学（4・10週間）、海外修学旅行（シンガポールなど）、スタディサプリやチューター制度、模擬授業・進路後援会あり。制服は選択制（男子2タイプ、女子3タイプ）で私服も可。部活動は全コースで所属可能。新学校長高嶋一成先生就任"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
+schools.push(
+  {
+    id: "sapporo-ryukoku-gakuen-hs",
+    name: "札幌龍谷学園高等学校",
+    color: "#2F855A",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "https://sapporo-ryukoku.ac.jp/",
+    highlights: [
+      "推薦（1/24）・単願（1/24）・一般（2/17）",
+      "探求型学習・国際教育の推進",
+      "スーパー特進,特進,プログレス進学,未来創造コース",
+      "プログラミング・ICT教育の充実"
+    ],
+    admissions: {
+      rounds: [
+        { 
+          label: "推薦", 
+          date: "2026-01-24", 
+          note: {
+            appweb: "2025年12月1日(月)～2025年12月26日(金)",
+            appmo: "2025年12月1日(月)～2025年12月26日(金)/15,000円",
+            appsho: "2026年1月5日(月)9:00～1月16日(金)16:30必着/入学願書･個人調査書･入学試験願書",
+            testhi: "なし",
+            testme: "なし",
+            testoth: "筆記課題として作文（500字・50分）が出題"
+          }
+        },
+        { 
+          label: "単願", 
+          date: "2026-01-24", 
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月30日(金)",
+            appmo: "2025年12月1日(月)～2026年1月30日(金)/15,000円",
+            appsho: "2026年1月5日(月)9:00～2025年2月5日(金)16:30必着/入学願書･個人調査書",
+            testhi: "なし",
+            testme: "あり※受験生のみ",
+            testoth: "筆記課題として作文（500字・50分）が出題"
+          }
+        },
+        { 
+          label: "一般", 
+          date: "2026-02-17", 
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月30日(金)",
+            appmo: "2025年12月1日(月)～2026年1月30日(金)/15,000円",
+            appsho: "2026年1月5日(月)9:00～2026年2月5日(金)16:30必着/入学願書･個人調査書",
+            testhi: "国数英理社｜各45分100点(スーパー特進,特進,プログレス進学), 国数英｜各45分100点(未来創造)",
+            testme: "なし※過年度卒業者はある可能性あり",
+            testoth: ""
+          }
+        }
+      ],
+      policy: { 
+        slide: "あり。",
+        admission: "欠席3年間30日以内（超過は理由書必須）。スポーツ特奨志願者はスポーツ特奨願書。",
+        acceptance: "学校生活において、生活行動上問題がないこと。学年進行に伴い極端な成績下降がないこと。",
+        etc: ""
+      }
+    },
+    courses: [
+      { 
+        name: "スーパー特進", 
+        description: "難関国公立大学・難関私立大学を目指す。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "1月推薦：Aランク、1月単願：Bランク", 
+            general: "Bランク" 
+          }
+        ]
+      },
+      { 
+        name: "特進", 
+        description: "国公立大学・難関私立大学合格を目指す。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "1月推薦：Bランク、1月単願：Dランク", 
+            general: "Dランク" 
+          }
+        ]
+      },
+      { 
+        name: "プログレス進学", 
+        description: "部活動や校外活動の充実と、大学受験の両立。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "1月推薦：Cランク、1月単願：Fランク", 
+            general: "Fランク" 
+          }
+        ]
+      },
+      { 
+        name: "未来創造", 
+        description: "確かな基礎学力を身につけ、自分の未来を自分の力で切り拓く力を養う。",
+        admission_criteria: [
+          { 
+            name: "出願基準", 
+            recomendation: "1月推薦：Dランク、1月単願：Hランク", 
+            general: "2月一般単願：Hランク、2月一般併願：Gランク" 
+          }
+        ]
+      }
+    ],
+    details: {
+      access: "無料スクールバス運行",
+      dormitory: "民間の学生会館と連携あり",
+      tuition: "入学金180,000円（推薦,単願）、220,000円（一般）。授業料38,000円（推薦,単願）、44,000円（一般）",
+      support: "特待制度（入学金免除・学習補助金）、資格・検定の奨励",
+      achievements: "7年連続国公立大学に10名以上合格（弘前大学、北海道教育大学、室蘭工業大学、千歳科学技術大学など）私立大学も多数（産業医科大学、北海学園大学、北翔大学、札幌大学、札幌国際大学など）",
+      features: "「生かされて生きる」を学園モットーに、生徒一人ひとりのこころを育てる教育。ハワイの加盟校に1か月半の留学。課題研究。生徒全員にiPad支給。"
+    ,
+      governance: "",
+      recruitment: ""}
+  }
+);
+// 札幌北斗高等学校（段落・表記修正）
+schools.push(
+  {
+    id: "sapporo-hokuto-hs",
+    name: "札幌北斗高等学校",
+    color: "#10B981",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "",
+    highlights: [
+      "推薦・単願A（1/17）／一般（併願・単願B）（2/13）",
+      "探究型学習の強化・資格取得支援・隔週土曜授業（特進）",
+      "『真理の探究・個性の顕現』を教育目標に掲げる"
+    ],
+    admissions: {
+      rounds: [
+        {
+          label: "推薦・単願A",
+          date: "2026-01-17",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "なし",
+            testme: "あり※受験生のみ",
+            testoth: ""
+          }
+        },
+        {
+          label: "一般（併願・単願B）",
+          date: "2026-02-13",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "特別進学・進学：国数英理社｜各50分／総合：国数英｜各50分",
+            testme: "あり※過年度中学校卒業受験者のみ",
+            testoth: "スライド合格あり"
+          }
+        }
+      ],
+      policy: {
+        slide: "あり（一般入試）。",
+        admission: "併願可。私立高校との併願で本校辞退の場合は入学一時金の返還なし。公立追加入学または二次募集で辞退の場合は入学一時金返還あり（入学金は返金なし）。",
+        acceptance: "特別進学：得点率70％程度／進学：得点率60％程度／総合：総合コース一般受験者の平均点。",
+        etc: "プレテスト：なし。"
+      }
+    },
+    courses: [
+      {
+        name: "特別進学コース",
+        description: "自律的学習習慣の育成を重視。隔週土曜日授業を実施。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "得点率70％程度。" }
+        ]
+      },
+      {
+        name: "進学コース",
+        description: "部活動を奨励しつつ、探究型学習を強化。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "得点率60％程度。" }
+        ]
+      },
+      {
+        name: "総合コース",
+        description: "資格取得を支援。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "一般受験者の平均点相当。" }
+        ]
+      }
+    ],
+    details: {
+      access: "さっぽろ駅からのアクセス良好。",
+      dormitory: "",
+      tuition: "",
+      support: [
+        "入学時奨学金：入学一時金納入時に最大23万円給付（入学一時金と相殺、出願時申込）。",
+        "学習活動奨学金：ランク毎または入試得点に応じて各月給付。",
+        "部活動奨学金：中学時代の実績に応じて各月給付。",
+        "成績奨学金：出願者全員対象（申込不要）。ランク特待＝特別進学・進学志願者、チャレンジ特待＝全コース志願者。",
+        "優遇奨学金：親族が卒業生/在校生、または双子同時入学で入学時・活動奨学金を給付。",
+        "入学後の特別奨学生制度：北斗賞／星座賞／質実真摯賞／きらぼし賞／北斗七星賞（学業・課外活動の模範となる在校生や社会的に優れた活動をする同窓生が対象）。"
+      ].join("</br>"),
+      achievements: "",
+      features: [
+        "探究活動：国内外の諸問題の相互関係をリサーチ。",
+        "キャリア探究で自己理解を深める学習設計。",
+        "新校舎は冷暖房完備。"
+      ].join("</br>"),
+      governance: "学校長：田中洋子先生。教育目標は『真理の探究・個性の顕現』。",
+      recruitment: "募集定員340名。単願受験者は特に人物良好で積極的な学校生活が期待できる生徒を歓迎。学習点に関わらず入試得点での合格可。"
+    ,
+      governance: "",
+      recruitment: ""}
+  }
+);
+
+// 札幌創成高等学校（段落・キー/文言修正）
+schools.push(
+  {
+    id: "sapporo-sosei-hs",
+    name: "札幌創成高等学校",
+    color: "#3B82F6",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "",
+    highlights: [
+      "専願（1/17）、一般（2/13）",
+      "コースに合わせた多様な合格基準（専願Ⅰ型/Ⅱ型）",
+      "探究活動の推進"
+    ],
+    admissions: {
+      rounds: [
+        {
+          label: "専願",
+          date: "2026-01-17",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "なし",
+            testme: "あり※受験生のみ",
+            testoth: "欠席日数50日以内が目安"
+          }
+        },
+        {
+          label: "一般",
+          date: "2026-02-13",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "国数英理社｜各45分・各100点・マークシート",
+            testme: "あり※過年度中学校卒業受験者のみ",
+            testoth: "スライド合格あり"
+          }
+        }
+      ],
+      policy: {
+        slide: "あり（一般入試）。",
+        admission: "専願入試でも他校受験は可だが、合格した場合は本校へ必ず入学。手続き延長の特例は記載なし。",
+        acceptance: "2026年度専願 基本合格ライン（欠席50日以内）：S選抜=Dランク(学習点236)／A特進=Fランク(206)／特進=Fランク(196)。",
+        etc: "専願Ⅰ型（学習点重視）：S選抜=C(256)／D(236)+入試65%／E(216)+入試70%)。A特進=F(210)またはF(201–209)+入試65%。特進=F(200)。専願Ⅱ型（学力点重視）：S選抜=入試75%／A特進=入試70%／特進=入試60%。プレテスト：なし。"
+      }
+    },
+    courses: [
+      {
+        name: "S選抜コース",
+        description: "国公立大学進学を目指す。部活動の参加も可能。",
+        admission_criteria: [
+          { name: "専願（基本）", recomendation: "Dランク（学習点236・欠席50日以内）", general: "" },
+          { name: "専願Ⅰ型（学習点重視）", recomendation: "C（256）／D（236・入試65%）／E（216・入試70%）", general: "" },
+          { name: "専願Ⅱ型（学力点重視）", recomendation: "入試の学力点75%", general: "" }
+        ]
+      },
+      {
+        name: "A特進コース",
+        description: "国公立・難関私大進学を目指す。文武両道を実践。",
+        admission_criteria: [
+          { name: "専願（基本）", recomendation: "Fランク（学習点206・欠席50日以内）", general: "" },
+          { name: "専願Ⅰ型（学習点重視）", recomendation: "F（210）／F（201–209・入試65%）", general: "" },
+          { name: "専願Ⅱ型（学力点重視）", recomendation: "入試の学力点70%", general: "" }
+        ]
+      },
+      {
+        name: "特進コース",
+        description: "私立大学・専門学校への進学や医療看護分野への就職を支援。",
+        admission_criteria: [
+          { name: "専願（基本）", recomendation: "Fランク（学習点196・欠席50日以内）", general: "" },
+          { name: "専願Ⅰ型（学習点重視）", recomendation: "F（200）", general: "" },
+          { name: "専願Ⅱ型（学力点重視）", recomendation: "入試の学力点60%", general: "" }
+        ]
+      }
+    ],
+    details: {
+      access: "",
+      dormitory: "",
+      tuition: "",
+      support: [
+        "専願奨学金：出願時の学習点により自動付与（専願合格者対象）。",
+        "一般奨学金：出願時の学習点または入試点により自動付与（一般合格者対象）。",
+        "強化指定クラブ奨学金：野球・サッカー・陸上。中学校経由で本校顧問へ相談し、願書提出までに内定通知が必要（専願合格者対象）。",
+        "特別奨学生制度（申請要）：清水武育英資金＝毎月授業料全額支給／L型＝入学金・毎月授業料の全額または半額支給。",
+        "特典制度（申請要）：兄姉が在校生＝重複在籍期間は弟妹の授業料半額。そうせい幼稚園卒園生＝入学金10万円支給。保護者がそうせい幼稚園卒園生または本校卒業生＝入学金5万円支給。",
+        "生徒通学交通費助成（申請要）：通学定期が月13,000円超の場合、超過分を全額支給。"
+      ].join("</br>"),
+      achievements: "",
+      features: [
+        "フィールドスタディ（職業体験）や海外留学（豪州3か月）など探究活動を推進。",
+        "全館クーラー完備・室内練習場あり。"
+      ].join("</br>"),
+      governance: "",
+      recruitment: "募集定員305名。参考：今年度入学者内訳＝S選抜42／A特進195／特進98（計335）。合格基準の方針：未公表。"
+    }
+  }
+);
+
+// 立命館慶祥高等学校（軽微な文言整備）
+schools.push(
+  {
+    id: "ritsumeikan-keisho-hs",
+    name: "立命館慶祥高等学校",
+    color: "#F43F5E",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "",
+    highlights: [
+      "自己推薦・専願・全国入試（1/17）、一般（2/17）",
+      "どの入試形態でもSPコース申請可",
+      "SSH指定校"
+    ],
+    admissions: {
+      rounds: [
+        {
+          label: "自己推薦・専願・全国入試",
+          date: "2026-01-17",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "国数英（各50分・各100点・英語リスニングなし）＋面接",
+            testme: "あり※受験生のみ",
+            testoth: "スライド合格あり／プレテストなし"
+          }
+        },
+        {
+          label: "一般入試",
+          date: "2026-02-17",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "国数英理社（各50分・各100点・英語リスニングあり）",
+            testme: "—",
+            testoth: "SPコース申請可／スライド合格あり／プレテストなし"
+          }
+        }
+      ],
+      policy: {
+        slide: "あり（どの入試形態でもSPコース申請可）。",
+        admission: "専願でも他校との併願可。",
+        acceptance: "SPクラス：入試配点の8割。",
+        etc: "プレテストなし。"
+      }
+    },
+    courses: [
+      {
+        name: "SPコース",
+        description: "東大・京大・医学部医学科を目指すコース。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "入試配点の8割", general: "" }
+        ]
+      },
+      {
+        name: "普通科",
+        description: "幅広い進路に対応。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "" }
+        ]
+      }
+    ],
+    details: {
+      access: "",
+      dormitory: "生徒寮あり。教員訪問・学習指導員・生活指導員によるサポート。",
+      tuition: "",
+      support: [
+        "立命館慶祥高等学校奨学金：返済義務なし・3か月継続給付。",
+        "自己推薦入試（SP推薦・一般推薦）出願時に奨学金認定可否決定（在籍中学校経由申請）。",
+        "スカラーシップA：中3 1学期または前期まで内申点Aランク。",
+        "スカラーシップB：中3 1学期または前期まで内申点Bランク。"
+      ].join("</br>"),
+      achievements: "",
+      features: [
+        "SSH指定校。インキュベーション・ラボ（放課後探究活動）。",
+        "最先端探究・国際教育プログラムの実施。"
+      ].join("</br>"),
+      governance: "",
+      recruitment: "募集定員125名（内部進学者除く）。今年度入学者・合格基準の方針は未記載。"
+    }
+  }
+);
+
+// 札幌静修高等学校（9/30追加）
+schools.push(
+  {
+    id: "sapporo-seishu-hs",
+    name: "札幌静修高等学校",
+    color: "#1178BB",
+    type: "私立",
+    gender: "共学", // ★TODO
+    website: "https://www.sapporoseishu.ed.jp/",
+    highlights: [
+      "1/23実施の推薦・単願入試、2/13実施の一般入試",
+      "30以上のクラブ活動と豊かな国際交流",
+      "ユニバーサル科/普通科特進/普通科総合の2コース制",
+      "創立100年を超える歴史"
+    ],
+    admissions: {
+      rounds: [
+        {
+          label: "推薦",
+          date: "2026-01-23",
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月13日(火)",
+            appmo: "2025年12月1日(月)～2026年1月13日(火)/16,000円",
+            appsho: "2025年12月1日(月)～2026年1月13日(火)/各日9:00～16:00(土日祝除く)",
+            testhi: "なし(ユニバーサル科及び普通科特進編入学コース変更を希望する生徒は2/13の筆記試験を受けることも可能)",
+            testme: "あり、ユニバーサル科希望の場合英語での質問の可能性あり",
+            testoth: "中学校長の推薦が必要"
+          }
+        },
+        {
+          label: "単願",
+          date: "2026-01-23",
+          note: {
+            appweb: "2025年12月1日(月)～2026年1月13日(火)",
+            appmo: "2025年12月1日(月)～2026年1月13日(火)/16,000円",
+            appsho: "2025年12月1日(月)～2026年1月13日(火)/各日9:00～16:00(土日祝除く)",
+            testhi: "なし(ユニバーサル科及び普通科特進編入学コース変更を希望する生徒は2/13の筆記試験を受けることも可能)",
+            testme: "あり",
+            testoth: ""
+          }
+        },
+        {
+          label: "一般",
+          date: "2026-02-13",
+          note: {
+            appweb: "2025年12月1日(月)～2026年2月5日(木)",
+            appmo: "2025年12月1日(月)～2026年2月5日(木)/16,000円",
+            appsho: "2025年12月1日(月)～2026年2月5日(木)",
+            testhi: "国数理社英（リスニングあり）|各50分100点、マークシート方式",
+            testme: "なし",
+            testoth: ""
+          }
+        }
+      ],
+      policy: {
+        slide: "あり（ユニバーサル科及び普通科特進の合格基準に満たない生徒で普通科総合の合格基準を満たした生徒は合格となる可能性あり）。",
+        admission: "一般入学試験は併願可能",
+        acceptance: ["ユニバーサル科：Fランク以上かつ、英語の評定に4以上を含むか英検3級以上を取得していること","普通科特進：Eランク以上","普通科総合：Gランク以上"].join('</br>'),
+        etc: "上記の基準に達していない生徒は内申点と一般入試の当日点により総合判定（ユニバーサル科及び普通科総合は5科目のうち高得点の3科目、普通科特進は5科目）"
+      }
+    },
+    courses: [
+      {
+        name: "ユニバーサル科",
+        description: "グローバルな環境で国際的な感覚を養い、積極性と個性を育む。複数の外国語を学び海外語学研修に参加可能。",
+        admission_criteria: [
+          { name: "", recomendation: "", general: "" }
+        ]
+      },
+      {
+        name: "普通科特進",
+        description: "基礎から応用までの幅広い学びで志望校合格を目指す。多様な入試に対応した受験対策講座",
+        admission_criteria: [
+          { name: "", recomendation: "", general: "" }
+        ]
+      },
+      {
+        name: "普通科総合",
+        description: "個性と社会性の両方を育み幅広い進路選択を実現。多様なコースを選択可能。",
+        admission_criteria: [
+          { name: "", recomendation: "", general: "" }
+        ]
+      }
+    ],
+    details: {
+      access: "札幌市電「静修学園前駅」徒歩すぐ/札幌市営地下鉄南北線「幌平橋駅」徒歩約5分",
+      dormitory: "なし",
+      tuition: "入学手続き時:255,500円/毎月:授業料36,000円、諸経費8,700円",
+      support: [
+        "推薦入学試験・単願入学試験受験者",
+        "■学業特待生",
+        "SA型：入学金/授業料を全額給付｜学習点A･B･Cランク",
+        "SB型：入学金を全額/授業料を半額給付｜学習点Dランク",
+        "SC型：入学金を全額給付｜学習点Eランク"  ,
+        "■クラブ活動特待生",
+        "A特待：入学金/授業料を全額給付｜学習点Ｆランク以上かつ中学時代のクラブ活動で優れた成績を持つもの",
+        "B特待：入学金を全額/授業料を半額給付｜学習点Ｆランク以上かつ中学時代のクラブ活動で優れた成績を持つもの",
+        "C特待：入学金を全額給付｜学習点Ｆランク以上かつ中学時代のクラブ活動で優れた成績を持つもの",
+        "WEB出願時に申請が必要",
+        "一般入学試験受験者",
+        "■学業特待生",
+        "GA型：入学金を半額/授業料を全額給付｜学習点A･Bランク",
+        "GB型：入学金を半額給付｜学習点C･Dランク"
+      ].join('<br>'),
+      achievements: "小樽商科大学、札幌学院大学、北海学院大学、札幌大学のほか専門学校や就職も多数",
+      features: [
+        "2022年に創立100周年を迎えた伝統校。",
+        "進路ガイダンスや職業体験など生徒の希望に沿った進路サポート。",
+        "すべての生徒に国際交流に挑戦可能。海外の姉妹校との交流も盛ん。"
+      ].join("<br>"),
+      governance: "校長は西田丈夫先生、静修100年構想に伴い校舎改修を予定",
+      recruitment: "募集定員ユニバーサル科 40名/普通科 240名"
+    }
+  }
+);
+
+    // -----------------------------
+    // 2) タグ（自動＋手動）
+    // -----------------------------
+    const DEFAULT_HASHTAGS = ['#北海道高校ニュース', '#高校比較', '#入試情報'];
+    function tagsForSchool(school) {
+      const set = new Set(DEFAULT_HASHTAGS);
+      if (school.type) {
+        set.add(`#${school.type}`);
+        if (school.type.includes('附属')) set.add('#附属');
+      }
+      if (school.gender) set.add(`#${school.gender}`); // 男子校/女子校/共学 → タグ化
+     
+      const dorm = school.details?.dormitory || '';
+      if (/あり|有/.test(dorm)) set.add('#寮あり');
+      else if (/なし|無/.test(dorm)) set.add('#寮なし');
+      (school.manualTags||[]).forEach(t => set.add(t.startsWith('#')?t:'#'+t));
+      return [...set];
+    }
+
+    // -----------------------------
+    // 3) 検索/描画 基本部
+    // -----------------------------
+    let searchQuery = '';
+    const searchInput = document.getElementById('search-input');
+    const activeSearch = document.getElementById('active-search');
+    const cards = document.getElementById('cards');
+    const resultsCount = document.getElementById('results-count');
+    const noResults = document.getElementById('no-results');
+
+    document.addEventListener('DOMContentLoaded', init);
+    function init() {
+      setupEventListeners();
+      update();
+      lucide.createIcons();
+      setTimeout(initExtendedFeatures, 300);
+    }
+    function initExtendedFeatures() {
+      addAdvancedFilters();   // ← フィルターを新仕様に変更
+      addSortingFeature();
+      addComparisonFeature();
+      addFavoritesFeature();
+    }
+    function setupEventListeners() {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        update();
+      });
+    }
+    function renderActiveSearch() {
+      activeSearch.innerHTML = '';
+      if (!searchQuery) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bg-white rounded-lg p-4 shadow-sm border';
+      wrapper.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-gray-700">🔍 検索中:</span>
+            <span class="inline-flex items-center bg-blue-100 text-blue-800 text-sm rounded-full px-3 py-1">"${searchQuery}"</span>
+          </div>
+          <button onclick="clearSearch()" class="text-sm text-blue-600 hover:text-blue-800 underline">検索解除</button>
+        </div>`;
+      activeSearch.appendChild(wrapper);
+    }
+    function clearSearch() {
+      searchQuery = '';
+      searchInput.value = '';
+      update();
+    }
+    function matchSchool(school) {
+      const tags = tagsForSchool(school).join(' ').toLowerCase();
+      return !searchQuery ||
+        school.name.toLowerCase().includes(searchQuery) ||
+        school.highlights.some(h => h.toLowerCase().includes(searchQuery)) ||
+        school.courses.some(c => (c.name+c.description).toLowerCase().includes(searchQuery)) ||
+        Object.values(school.details).some(d => (d||'').toLowerCase().includes(searchQuery)) ||
+        tags.includes(searchQuery);
+    }
+    function renderCards() {
+      const filtered = schools.filter(matchSchool);
+      cards.innerHTML = '';
+      resultsCount.textContent = filtered.length;
+      if (filtered.length === 0) { noResults.classList.remove('hidden'); return; }
+      noResults.classList.add('hidden');
+
+      filtered.forEach(school => {
+        const card = document.createElement('article');
+        card.className = 'school-card bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition-all duration-300 border border-gray-100 relative';
+        card.dataset.id = school.id; // ★カードにIDを持たせる（フィルタ用）
+        card.innerHTML = `
+          <div class="h-2 rounded-t-xl -mt-6 -mx-6 mb-4" style="background:${school.color}"></div>
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h2 class="text-xl font-bold text-gray-900 mb-2">${school.name}</h2>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${school.type.includes('公立') ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+                  ${school.type}高等学校
+                </span>
+                ${school.gender ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-purple-100 text-purple-800">${school.gender}</span>` : ''}
+              </div>
+            </div>
+            ${school.website ? `<a href="${school.website}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800" title="公式サイトを開く"><i data-lucide="external-link" class="h-5 w-5"></i></a>` : ''}
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">✨ 学校の特色・最新情報</h3>
+            <ul class="space-y-2">
+              ${school.highlights.map(h => `<li class="text-sm text-gray-600 flex items-start"><span class="text-blue-500 mr-2 mt-1">•</span><span>${h}</span></li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">📅 入試日程・方式</h3>
+            <div class="space-y-2">
+              ${school.admissions.rounds.map(r => `
+                <details>
+                  <summary class="flex justify-between items-center p-2 bg-gray-50 rounded cursor-pointer">
+                    <span class="font-medium text-gray-800">${r.label}</span>
+                    <span class="text-blue-600 font-semibold">${formatDate(r.date)}</span>
+                  </summary>
+                  ${r.note ? `
+                  <div class="text-sm text-gray-700 ml-2 mb-2 mt-2 space-y-1">
+                    <div class="text-blue-600 font-semibold">出願期間</div>
+                    <ul class="text-xs text-gray-600 list-disc ml-5">
+                      <li><strong>WEB受付：</strong>${r.note.appweb||''}</li>
+                      <li><strong>検定料の納入：</strong>${r.note.appmo||''}</li>
+                      <li><strong>書類提出：</strong>${r.note.appsho||''}</li>
+                    </ul>
+                    <div class="text-blue-600 font-semibold mt-2">試験詳細</div>
+                    <ul class="text-xs text-gray-600 list-disc ml-5">
+                      <li><strong>筆記試験：</strong>${r.note.testhi||''}</li>
+                      <li><strong>面接：</strong>${r.note.testme||''}</li>
+                      <li><strong>その他：</strong>${r.note.testoth||''}</li>
+                    </ul>
+                  </div>` : ''}
+                </details>
+              `).join('')}
+              <div class="text-xs text-gray-600 mt-2 p-2 bg-blue-50 rounded">
+                <strong>スライド合格:</strong> ${school.admissions.policy.slide||''}<br>
+                <strong>出願条件:</strong> ${school.admissions.policy.admission||''}<br>
+                <strong>合格基準:</strong> ${school.admissions.policy.acceptance||''}<br>
+                <strong>その他:</strong> ${school.admissions.policy.etc||''}
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">🎯 設置コース</h3>
+            <div class="space-y-2">
+              ${school.courses.map(c => `
+                <div class="p-2 bg-gray-50 rounded">
+                  <div class="font-medium text-gray-800">${c.name}</div>
+                  <div class="text-sm text-gray-600">${c.description||''}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="border-t pt-4">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">📋 詳細情報</h3>
+            <div class="grid grid-cols-1 gap-3 text-xs text-gray-600">
+              <div><strong class="text-gray-700">🚃 アクセス:</strong><br>${school.details.access||''}</div>
+              <div><strong class="text-gray-700">🏠 寮:</strong><br>${school.details.dormitory||''}</div>
+              <div><strong class="text-gray-700">💰 授業料:</strong><br>${school.details.tuition||''}</div>
+              <div><strong class="text-gray-700">📚 学習支援:</strong><br>${school.details.support||''}</div>
+              <div><strong class="text-gray-700">🎓 進学実績:</strong><br>${school.details.achievements||''}</div>
+              <div><strong class="text-gray-700">⚡ 特色:</strong><br>${school.details.features||''}<br>${school.details.governance||''}<br>${school.details.recruitment||''}</div>
+            </div>
+          </div>
+
+          ${school.youtubelink ? `
+          <div class="mt-4">
+            <iframe width="320" height="180" src="https://www.youtube.com/embed/${school.youtubelink}" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>` : ''}
+
+          <div class="mt-4 pt-3 border-t">
+            <div class="flex flex-wrap gap-2 text-sm">
+              ${tagsForSchool(school).map(tag => `<span class="tag-chip">${tag}</span>`).join('')}
+            </div>
+          </div>
+        `;
+        cards.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return `${d.getMonth()+1}/${d.getDate()}`;
+    }
+    function update() { renderActiveSearch(); renderCards(); }
+
+    // -----------------------------
+    // 4) 新フィルター（受験形式/受験日程/学校区分）
+    // -----------------------------
+    function addAdvancedFilters() {
+      const box = document.createElement('div');
+      box.className = 'bg-white p-4 rounded-lg shadow-sm mb-6';
+      box.innerHTML = `
+        <h3 class="font-semibold text-gray-700 mb-3">詳細検索</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- 受験形式 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">受験形式</label>
+            <select id="examtype-filter" class="w-full border border-gray-300 rounded-lg p-2">
+              <option value="">すべて</option>
+              <option value="推薦">推薦</option>
+              <option value="専願">専願</option>
+              <option value="単願">単願</option>
+              <option value="一般">一般</option> <!-- 併願は一般に包含 -->
+              
+            </select>
+            <p class="text-xs text-gray-500 mt-1">※「併願」は自動的に「一般」に含めます。1月は専願、2月は一般扱い。</p>
+          </div>
+
+          <!-- 受験日程（M/D） -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">受験日程</label>
+            <input id="examdate-filter" type="text" placeholder="例: 2/13"
+                   class="w-full border border-gray-300 rounded-lg p-2" />
+            <p class="text-xs text-gray-500 mt-1">※ 月/日（M/D）で入力。空欄なら指定なし</p>
+          </div>
+
+          <!-- 学校区分（男子校/女子校/共学） -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">学校区分</label>
+            <select id="gender-filter" class="w-full border border-gray-300 rounded-lg p-2">
+              <option value="">すべて</option>
+              <option value="男子校">男子校</option>
+              <option value="女子校">女子校</option>
+              <option value="共学">共学</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">※ 各カードの <code>gender</code> に入力してください。</p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button id="apply-filters" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">フィルターを適用</button>
+          <button id="clear-filters" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg ml-2">クリア</button>
+        </div>
+      `;
+      document.getElementById('filter-container-placeholder').appendChild(box);
+
+
+            // 形式を正規化する関数（ラベル優先 → 月でフォールバック）
+        const normalizeExamType = (round) => {
+        const label = (round.label || '').trim();
+
+        // 1) ラベルで最優先判定
+        if (/推薦/.test(label)) return '推薦';
+        if (/単願/.test(label)) return '単願';   // ← 単願は最優先で単願に
+        if (/専願/.test(label)) return '専願';
+        if (/併願/.test(label)) return '一般';   // 併願は一般に包含
+        if (/一般/.test(label)) return '一般';
+
+        // 2) ラベルに情報が無い時だけ月で分類（フォールバック）
+        if (round.date) {
+            const d = new Date(round.date);
+            const m = d.getMonth() + 1;
+            if (m === 1) return '専願';
+            if (m === 2) return '一般';
+        }
+
+        return '';
+        };
+
+
+      document.getElementById('apply-filters').addEventListener('click', () => {
+        const typeWord = document.getElementById('examtype-filter').value;   // 推薦/専願/一般 or ""
+        const dateWord = document.getElementById('examdate-filter').value.trim(); // "M/D" or ""
+        const genderWord = document.getElementById('gender-filter').value;   // 男子校/女子校/共学 or ""
+
+        let targetMonth = null, targetDay = null;
+        if (dateWord) {
+          const m = dateWord.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
+          if (m) { targetMonth = +m[1]; targetDay = +m[2]; }
+        }
+
+        const byId = Object.fromEntries(schools.map(s => [s.id, s]));
+        let visibleCount = 0;
+
+        document.querySelectorAll('.school-card').forEach(card => {
+          const school = byId[card.dataset.id];
+          let visible = true;
+
+          // 受験形式判定
+          if (typeWord) {
+            const hasType = school?.admissions?.rounds?.some(r => normalizeExamType(r) === typeWord);
+            if (!hasType) visible = false;
+          }
+
+          // 受験日程（M/D 一致）
+          if (visible && targetMonth !== null && targetDay !== null) {
+            const hasDate = school?.admissions?.rounds?.some(r => {
+              if (!r.date) return false;
+              const d = new Date(r.date);
+              return (d.getMonth()+1) === targetMonth && d.getDate() === targetDay;
+            });
+            if (!hasDate) visible = false;
+          }
+
+          // 学校区分（gender）
+          if (visible && genderWord) {
+            if ((school.gender||'') !== genderWord) visible = false;
+          }
+
+          card.style.display = visible ? 'block' : 'none';
+          if (visible) visibleCount++;
+        });
+
+        resultsCount.textContent = visibleCount;
+        if (visibleCount === 0) noResults.classList.remove('hidden'); else noResults.classList.add('hidden');
+      });
+
+      document.getElementById('clear-filters').addEventListener('click', () => {
+        document.getElementById('examtype-filter').value = '';
+        document.getElementById('examdate-filter').value = '';
+        document.getElementById('gender-filter').value = '';
+        document.querySelectorAll('.school-card').forEach(card => card.style.display = 'block');
+        const total = document.querySelectorAll('.school-card').length;
+        resultsCount.textContent = total;
+        noResults.classList.add('hidden');
+      });
+    }
+
+    // -----------------------------
+    // 5) ソート
+    // -----------------------------
+    function addSortingFeature() {
+      const sortContainer = document.createElement('div');
+      sortContainer.className = 'flex justify-end mb-4';
+      sortContainer.innerHTML = `
+        <div class="relative">
+          <select id="sort-select" class="border border-gray-300 rounded-lg p-2 pr-8 bg-white">
+            <option value="name-asc">学校名 (昇順)</option>
+            <option value="name-desc">学校名 (降順)</option>
+            <option value="date-asc">入試日程 (早い順)</option>
+            <option value="date-desc">入試日程 (遅い順)</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <i data-lucide="chevron-down" class="h-4 w-4"></i>
+          </div>
+        </div>`;
+      document.querySelector('#results-stats').parentNode.appendChild(sortContainer);
+      document.getElementById('sort-select').addEventListener('change', sortCards);
+
+      function sortCards() {
+        const method = document.getElementById('sort-select').value;
+        const container = document.getElementById('cards');
+        const list = Array.from(container.children);
+        list.sort((a, b) => {
+          const cardA = a, cardB = b;
+          if (method === 'name-asc')   return cardA.querySelector('h2').textContent.localeCompare(cardB.querySelector('h2').textContent);
+          if (method === 'name-desc')  return cardB.querySelector('h2').textContent.localeCompare(cardA.querySelector('h2').textContent);
+          const da = getEarliestDate(cardA), db = getEarliestDate(cardB);
+          return method === 'date-asc' ? da - db : db - da;
+        });
+        list.forEach(el => container.appendChild(el));
+      }
+      function getEarliestDate(card) {
+        const ss = Array.from(card.querySelectorAll('summary')).map(s => s.querySelector('span:last-child')?.textContent).filter(Boolean);
+        if (!ss.length) return new Date(2099,11,31).getTime();
+        const toDate = s => { const [m,d] = s.split('/').map(Number); return new Date(2026, m-1, d).getTime(); };
+        return Math.min(...ss.map(toDate));
+      }
+      try { lucide.createIcons(); } catch {}
+    }
+
+    // -----------------------------
+    // 6) 比較（既存）
+    // -----------------------------
+    function addComparisonFeature() {
+      function addCompareButtons() {
+        document.querySelectorAll('.school-card').forEach(card => {
+          if (!card.querySelector('.compare-btn')) {
+            const btn = document.createElement('button');
+            btn.className = 'compare-btn absolute top-2 right-2 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded';
+            btn.textContent = '比較に追加';
+            btn.dataset.schoolId = card.querySelector('h2').textContent.trim();
+            btn.addEventListener('click', toggleCompare);
+            card.style.position = 'relative';
+            card.appendChild(btn);
+          }
+        });
+      }
+      const panel = document.createElement('div');
+      panel.className = 'fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4 hidden';
+      panel.innerHTML = `
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">学校比較</h3>
+            <div>
+              <button id="view-comparison" class="bg-blue-600 text-white px-4 py-2 rounded mr-2 disabled:opacity-50">比較を表示</button>
+              <button id="clear-comparison" class="text-gray-600 border border-gray-300 px-4 py-2 rounded">クリア</button>
+            </div>
+          </div>
+          <div id="compare-items" class="flex gap-4 overflow-x-auto pb-2"></div>
+        </div>`;
+      document.body.appendChild(panel);
+
+      const items = [];
+      const MAX = 3;
+
+      function toggleCompare(e) {
+        const id = e.target.dataset.schoolId;
+        const idx = items.indexOf(id);
+        if (idx === -1) {
+          if (items.length >= MAX) { alert(`比較できる学校は最大${MAX}校までです`); return; }
+          items.push(id);
+          e.target.textContent = '比較から削除';
+          e.target.classList.replace('bg-blue-100','bg-red-100');
+          e.target.classList.replace('text-blue-800','text-red-800');
+          e.target.classList.replace('hover:bg-blue-200','hover:bg-red-200');
+        } else {
+          items.splice(idx,1);
+          e.target.textContent = '比較に追加';
+          e.target.classList.replace('bg-red-100','bg-blue-100');
+          e.target.classList.replace('text-red-800','text-blue-800');
+          e.target.classList.replace('hover:bg-red-200','hover:bg-blue-200');
+        }
+        updatePanel();
+      }
+      function updatePanel() {
+        const wrap = document.getElementById('compare-items');
+        wrap.innerHTML = '';
+        items.forEach(id => {
+          const el = document.createElement('div');
+          el.className = 'flex-shrink-0 p-3 border rounded bg-gray-50 w-48';
+          el.innerHTML = `<p class="font-medium truncate">${id}</p><button class="text-xs text-red-600 mt-2 remove-item" data-id="${id}">削除</button>`;
+          wrap.appendChild(el);
+        });
+        if (items.length) {
+          panel.classList.remove('hidden');
+          document.getElementById('view-comparison').disabled = items.length < 2;
+        } else panel.classList.add('hidden');
+
+        document.querySelectorAll('.remove-item').forEach(b=>{
+          b.addEventListener('click', ()=>{
+            const id = b.dataset.id;
+            const i = items.indexOf(id);
+            if (i>-1) items.splice(i,1);
+            document.querySelectorAll('.compare-btn').forEach(btn=>{
+              if (btn.dataset.schoolId===id){
+                btn.textContent='比較に追加';
+                btn.classList.replace('bg-red-100','bg-blue-100');
+                btn.classList.replace('text-red-800','text-blue-800');
+                btn.classList.replace('hover:bg-red-200','hover:bg-blue-200');
+              }
+            });
+            updatePanel();
+          });
+        });
+      }
+      document.getElementById('view-comparison').addEventListener('click', () => {
+        if (items.length<2) return;
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50';
+        modal.innerHTML = `
+          <div class="bg-white rounded-lg p-8 max-w-6xl w-full max-h-[90vh] overflow-auto relative">
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"><i data-lucide="x" class="h-6 w-6"></i></button>
+            <h2 class="text-2xl font-bold mb-6">学校比較</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th class="text-left p-3 bg-gray-100 border sticky left-0 z-10">項目</th>
+                    ${items.map(x=>`<th class="text-left p-3 bg-gray-100 border">${x}</th>`).join('')}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-medium p-3 border bg-white sticky left-0">学校タイプ</td>
+                    ${items.map(id=>{
+                      const card = [...document.querySelectorAll('.school-card')].find(c=>c.querySelector('h2').textContent.trim()===id);
+                      const type = card?.querySelector('.inline-flex')?.textContent.trim()||'情報なし';
+                      return `<td class="p-3 border">${type}</td>`;
+                    }).join('')}
+                  </tr>
+                  <tr>
+                    <td class="font-medium p-3 border bg-white sticky left-0">入試日程</td>
+                    ${items.map(id=>{
+                      const card = [...document.querySelectorAll('.school-card')].find(c=>c.querySelector('h2').textContent.trim()===id);
+                      const dates = [...(card?.querySelectorAll('summary')||[])].map(el=>`${el.querySelector('span:first-child')?.textContent||''}: ${el.querySelector('span:last-child')?.textContent||''}`).join('<br>');
+                      return `<td class="p-3 border">${dates||'情報なし'}</td>`;
+                    }).join('')}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+        try{lucide.createIcons();}catch{}
+        document.getElementById('close-modal').addEventListener('click', ()=>document.body.removeChild(modal));
+      });
+      document.getElementById('clear-comparison').addEventListener('click', ()=>{
+        items.length=0;
+        document.querySelectorAll('.compare-btn').forEach(btn=>{
+          btn.textContent='比較に追加';
+          btn.classList.replace('bg-red-100','bg-blue-100');
+          btn.classList.replace('text-red-800','text-blue-800');
+          btn.classList.replace('hover:bg-red-200','hover:bg-blue-200');
+        });
+        updatePanel();
+      });
+
+      const obs = new MutationObserver(m => { if (m.some(x=>x.type==='childList' && x.addedNodes.length>0)) addCompareButtons(); });
+      obs.observe(document.getElementById('cards'), { childList:true });
+      addCompareButtons();
+    }
+
+    // -----------------------------
+    // 7) お気に入り（説明＋ボタン横ツールチップ）
+    // -----------------------------
+    function addFavoritesFeature() {
+      let favorites = [];
+      try { const raw = localStorage.getItem('schoolFavorites'); if (raw) favorites = JSON.parse(raw); } catch {}
+      const explanationBox = document.createElement('div');
+      explanationBox.className = 'bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 text-sm text-gray-700';
+      explanationBox.innerHTML = `
+        <h4 class="font-medium mb-2">「お気に入り機能について」</h4>
+        <p>「お気に入り」ボタンで気になった学校を端末内に保存します。外部サーバーには送信されません。</p>
+        <ul class="list-disc ml-5 mt-2">
+          <li>別デバイスでは共有されません</li>
+          <li>シークレットモードでは閉じると消えます</li>
+          <li>履歴・サイトデータ削除で消えます</li>
+        </ul>`;
+      const placeholder = document.getElementById('filter-container-placeholder');
+      placeholder.insertBefore(explanationBox, placeholder.firstChild);
+
+      function addFavoriteButtons() {
+        document.querySelectorAll('.school-card').forEach(card => {
+          if (card.querySelector('.favorite-btn')) return;
+          const schoolName = card.querySelector('h2').textContent.trim();
+          const isFavorite = favorites.includes(schoolName);
+          const favBtn = document.createElement('button');
+          favBtn.className = `favorite-btn absolute top-2 right-20 text-xs px-2 py-1 rounded flex items-center ${isFavorite?'bg-yellow-100 text-yellow-800 hover:bg-yellow-200':'bg-gray-100 text-gray-800 hover:bg-gray-200'}`;
+          favBtn.innerHTML = `<i data-lucide="star" class="h-4 w-4 mr-1"></i> ${isFavorite ? 'お気に入り済' : 'お気に入り'}`;
+          favBtn.dataset.schoolId = schoolName;
+          favBtn.addEventListener('click', e => {
+            const id = e.currentTarget.dataset.schoolId;
+            const idx = favorites.indexOf(id);
+            if (idx === -1) {
+              favorites.push(id);
+              e.currentTarget.innerHTML = `<i data-lucide="star" class="h-4 w-4 mr-1"></i> お気に入り済`;
+              e.currentTarget.classList.replace('bg-gray-100','bg-yellow-100');
+              e.currentTarget.classList.replace('text-gray-800','text-yellow-800');
+              e.currentTarget.classList.replace('hover:bg-gray-200','hover:bg-yellow-200');
+            } else {
+              favorites.splice(idx,1);
+              e.currentTarget.innerHTML = `<i data-lucide="star" class="h-4 w-4 mr-1"></i> お気に入り`;
+              e.currentTarget.classList.replace('bg-yellow-100','bg-gray-100');
+              e.currentTarget.classList.replace('text-yellow-800','text-gray-800');
+              e.currentTarget.classList.replace('hover:bg-yellow-200','hover:bg-gray-200');
+            }
+            try { localStorage.setItem('schoolFavorites', JSON.stringify(favorites)); } catch {}
+            try { lucide.createIcons(); } catch {}
+          });
+
+          const tipWrap = document.createElement('div');
+          tipWrap.className = 'fav-tip';
+          tipWrap.innerHTML = `
+            <button class="p-1 rounded hover:bg-gray-100" aria-label="お気に入りの説明" title="お気に入りの説明">
+              <i data-lucide="info" class="h-4 w-4 text-gray-500"></i>
+            </button>
+            <div class="fav-tip-content">
+              <div class="font-medium mb-1">お気に入りとは？</div>
+              この端末のブラウザに保存します。<br>
+              別の端末では共有されません。<br>
+              シークレットでは閉じると消えます。
+            </div>`;
+          tipWrap.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation(); tipWrap.classList.toggle('show');
+          });
+          document.addEventListener('click', () => tipWrap.classList.remove('show'));
+
+          card.style.position = 'relative';
+          card.appendChild(favBtn);
+          card.appendChild(tipWrap);
+        });
+        try { lucide.createIcons(); } catch {}
+      }
+
+      const favFilterBtn = document.createElement('button');
+      favFilterBtn.id = 'favorites-filter';
+      favFilterBtn.className = 'ml-4 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center';
+      favFilterBtn.innerHTML = `<i data-lucide="star" class="h-4 w-4 mr-2"></i><span>お気に入りのみ表示</span>`;
+      const searchBarContainer = document.querySelector('.relative.max-w-md.mx-auto');
+      if (searchBarContainer) {
+        const parentDiv = document.createElement('div');
+        parentDiv.className = 'flex items-center justify-center mt-4';
+        searchBarContainer.parentNode.insertBefore(parentDiv, searchBarContainer.nextSibling);
+        parentDiv.appendChild(favFilterBtn);
+      }
+      let showingOnlyFavorites = false;
+      favFilterBtn.addEventListener('click', () => {
+        showingOnlyFavorites = !showingOnlyFavorites;
+        if (showingOnlyFavorites) {
+          favFilterBtn.classList.replace('bg-yellow-100','bg-yellow-500');
+          favFilterBtn.classList.replace('text-yellow-800','text-white');
+          favFilterBtn.querySelector('span').textContent = 'すべて表示';
+          document.querySelectorAll('.school-card').forEach(card => {
+            const name = card.querySelector('h2').textContent.trim();
+            card.style.display = favorites.includes(name) ? 'block' : 'none';
+          });
+        } else {
+          favFilterBtn.classList.replace('bg-yellow-500','bg-yellow-100');
+          favFilterBtn.classList.replace('text-white','text-yellow-800');
+          favFilterBtn.querySelector('span').textContent = 'お気に入りのみ表示';
+          document.querySelectorAll('.school-card').forEach(card => card.style.display='block');
+        }
+        const visibleCount = [...document.querySelectorAll('.school-card')].filter(el => el.style.display !== 'none').length;
+        resultsCount.textContent = visibleCount;
+        if (visibleCount === 0) noResults.classList.remove('hidden'); else noResults.classList.add('hidden');
+        try { lucide.createIcons(); } catch {}
+      });
+
+      const observer = new MutationObserver(muts => {
+        if (muts.some(m => m.type==='childList' && m.addedNodes.length>0)) {
+          setTimeout(addFavoriteButtons, 50);
+        }
+      });
+      observer.observe(document.getElementById('cards'), { childList:true });
+      setTimeout(addFavoriteButtons, 50);
+    }
+  </script>
+</body>
+</html>
