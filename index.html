@@ -79,109 +79,227 @@
     // -----------------------------
     const schools = [];
 
-    // 藤女子（女子校の例）
-    schools.push({
-      id: "fuji-joshi-hs-3year",
-      name: "藤女子高校（3か年コース）",
-      color: "#992299",
-      type: "私立",
-      gender: "女子校", // ★TODO
-      gender: "女子校", // ★TODO: 男子校/女子校/共学 を入力
-      website: "",
-      highlights: [
-        "専願・一般ともに面接実施（寄宿生は保護者同伴）",
-        "スライド合格制度あり（特別進学↔総合進学）",
-        "一般入試優秀者に入学金相当25万円給付",
-        "姉妹校・指定校推薦が充実"
-      ],
-      admissions: {
-        rounds: [
-          { label: "専願", date: "2026-01-24",
-            note: { appweb:"", appmo:"", appsho:"", testhi:"数英", testme:"あり", testoth:"" } },
-          { label: "一般", date: "2026-02-13",
-            note: { appweb:"", appmo:"", appsho:"", testhi:"5教科", testme:"寄宿生のみ", testoth:"" } }
+    // --- NEW SCHOOLS (append to schools) ---
+    schools.push(
+      {
+        id: "fuji-joshi-hs-3year",
+        name: "藤女子高校（3か年コース）",
+        color: "#992299",
+        type: "私立",
+        gender: "女子校", // ★TODO
+        website: "",
+        highlights: [
+          "専願・一般ともに面接実施（寄宿生は保護者同伴）",
+          "スライド合格制度あり（特別進学↔総合進学）",
+          "一般入試優秀者に入学金相当25万円給付",
+          "姉妹校・指定校推薦が充実"
         ],
-        policy: { slide:"あり", admission:"", acceptance:"", etc:"" }
-      },
-      courses: [
-        { name:"特別進学コース", description:"国公立・難関私大を目指す。" },
-        { name:"総合進学コース", description:"基礎学力の充実。" }
-      ],
-      details: {
-        access: "", dormitory:"あり（女子寮あり）", tuition:"",
-        support:"個別指導・特待制度など。", achievements:"", features:"", governance:"", recruitment:""
-      },
-      youtubelink: "HeXnwzMt4dM",
-      manualTags: [] // 任意：#共学 など手動タグ
-    });
-
-    // 札幌大谷（共学の例）
-    schools.push({
-      id: "sapporo-otani-hs",
-      name: "札幌大谷高等学校",
-      color: "#DC2626",
-      type: "私立",
-      gender: "共学", // ★TODO
-      gender: "共学", // ★TODO
-      website: "",
-      highlights: [
-        "単願入試（面接重視＋学力点検）と一般入試を実施",
-        "普通科はPS・AS（学力重点）とG（個性探求）に分かれる",
-        "音楽科・美術科は実技試験あり",
-        "グローバルスタディーズ・語学研修など"
-      ],
-      admissions: {
-        rounds: [
-          { label: "推薦", date: "2026-01-24",
-            note:{ appweb:"", appmo:"", appsho:"", testhi:"学力点検", testme:"あり", testoth:"" }},
-          { label: "一般", date: "2026-02-13",
-            note:{ appweb:"", appmo:"", appsho:"", testhi:"3教科", testme:"なし", testoth:"" }}
+        admissions: {
+          rounds: [{
+             label: "専願", date: "2026-01-24", 
+            note:{
+            appweb:"2025年12月1日(月)～2026年1月9日(金)23:59",
+            appmo:"2025年12月1日(月)～2026年1月9日(金)23:59/16,000円",
+            appsho:"2025年12月1日～2026年1月16日(金)17:00/入学願書･個人調査書･志望理由書",
+            testhi:"数英(リスニングなし)｜各50分100点",
+            testme:"あり",
+            testoth:""},
+            },
+            { label: "一般", date: "2026-02-13", 
+            note: {
+            appweb:"2025年12月1日(月)～2026年1月31日(土)23:59",
+            appmo:"2025年12月1日(月)～2026年1月31日(土)23:59/16,000円",
+            appsho:"2025年12月1日～2026年2月5日(木)17:00/入学願書･個人調査書(･欠席理由書)",
+            testhi:"国数理社英(リスニングあり)｜各50分100点",
+            testme:"寄宿生のみあり",
+            testoth:""}}
+          ],
+          policy: {slide: "あり。特別進学不合格でも総合進学基準に達すれば総合進学に合格認定。総合→特別は一般入試で基準達成時に認定。",
+                  admission: "専願出願資格：女子・欠席30日以内・第一志望で必ず入学・内申等の基準あり。",
+                   acceptance: "",
+                   etc:"いずれの入試でも寄宿生は保護者同伴面接あり。特待は出願時に希望選択 。"
+                   }
+        },                
+          courses: [
+          { name: "特別進学コース", description: "週2コマ多く、国公立・難関私大を見据えたカリキュラム。高2以降は6か年コースとHRは混合だが授業は別、文理分岐あり。",
+            admission_criteria: [{ name:"出願基準", recomendation: "内申点276（Ｂランク）以上もしくは3年次5教科合計22以上",
+            general:""}]
+           },
+          { name: "総合進学コース", description: "基礎学力の充実と進路に応じた選択科目。一般入試で基準達成時は特別進学コースへスライド可。",
+            admission_criteria: [{ name:"出願基準",
+            recomendation : "内申点236（Ｄランク）以上もしくは3年次5教科合計20以上",
+            general:""
+           }]
+          }
         ],
-        policy: { slide:"あり", admission:"", acceptance:"", etc:"" }
-      },
-      courses: [
-        { name:"普通科 プログレッシブS（PS）", description:"国公立大・難関私大。" },
-        { name:"普通科 アスリートS（AS）", description:"部活と学習の両立。" }
-      ],
-      details: { access:"", dormitory:"なし", tuition:"", support:"", achievements:"", features:"", governance:"", recruitment:"" },
-      manualTags: []
-    });
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "学習段階に応じた指導、先輩・卒業生から学ぶ機会、英作文・小論文・面接の個別指導、国公立二次対策講習・添削、特待給付制度あり。特待は出願時に希望選択、一般入試成績が極めて優秀な者に入学金相当25万円給付。",
+          achievements: "2024年度：主要国公立17名（北海道大・弘前大・札幌医科大など）。道外私大は慶應・上智・東京理科大など。約7割が指定校（慶応義塾、明治、立教、中央大など）・姉妹校推薦・公募推薦・総合型等の年内入試。",
+          features: "生徒の声：自由で優しい・自習しやすい・校舎が綺麗。高1は6か年とHRが別、高2からHR混合（授業は別）で文理分岐。高3では理系Ⅰ、Ⅱ、Ⅲと文系Ⅰ、Ⅱに分かれる。姉妹校の藤女子大学は受験料無料、天使大学ほか姉妹校推薦あり。"
+        ,
+      governance: "",
+      recruitment: ""},
+      youtubelink: "HeXnwzMt4dM"
+              
+      }
+    );
 
-    // 東海大付属札幌（共学の例）
-    schools.push({
-      id: "tokai-univ-sapporo-hs",
-      name: "東海大学付属札幌高等学校",
-      color: "#8B5CF6",
-      type: "私立（附属）",
-      gender: "共学", // ★TODO
-      website: "",
-      highlights: [
-        "推薦・1月単願（1/16）、2月単願・一般（2/13）",
-        "スライド合格あり（1月単願のスライド者は2月一般で特別進学コース再チャレンジ可）",
-        "総合進学／特別進学の2コース制",
-        "東海大学の附属校"
-      ],
-      admissions: {
-        rounds: [
-          { label:"推薦・1月単願", date:"2026-01-16",
-            note:{ appweb:"", appmo:"", appsho:"", testhi:"推薦：面接／1月単願：国数英", testme:"推薦：あり／単願：なし", testoth:"スライド合格あり" } },
-          { label:"2月単願・一般", date:"2026-02-13",
-            note:{ appweb:"", appmo:"", appsho:"", testhi:"5教科", testme:"—", testoth:"プレテストなし" } }
+    schools.push(
+      {
+        id: "sapporo-otani-hs",
+        name: "札幌大谷高等学校",
+        color: "#DC2626",
+        type: "私立",
+        gender: "共学", // ★TODO
+        website: "",
+        highlights: [
+          "単願入試（面接重視＋学力点検）と一般入試を実施",
+          "普通科はPS・AS（学力重点）とG（個性探求）に分かれる",
+          "音楽科・美術科は実技試験あり、冬期芸術教室で実技免除判定あり",
+          "グローバルスタディーズ・語学研修・予備門講座など充実"
         ],
-        policy: { slide:"あり（1月→2月再チャレンジ可）", admission:"", acceptance:"", etc:"" }
-      },
-      courses: [
-        { name:"特別進学コース", description:"国公立・難関私大を目指す。" },
-        { name:"総合進学コース", description:"文武両道。東海大推薦制度あり。" }
-      ],
-      details: {
-        access:"", dormitory:"", tuition:"",
-        support:"部活動奨励奨学金など。", achievements:"", features:"附属ネットワーク等。",
-        governance:"", recruitment:"募集定員280名（特進80／総合200）"
-      },
-      manualTags:[]
-    });
+        admissions: {
+          rounds: [
+            { label: "推薦", date: "2026-01-24", note:{ 
+            appweb:"2025年12月1日(月)～2026年1月14日(水)23:59",
+            appmo:"2025年12月1日(月)～2026年1月14日(水)23:59/15,000円",
+            appsho:"2025年12月1日～2026年1月14日(水)/入学願書･個人調査書(･特別奨学金申請書･欠席理由書)",
+            testhi:"合否には関わらないものの2/13に国数英(リスニングなし)｜各50分100点の学力点検を実施",
+            testme:"あり",
+            testoth:"音楽科･美術科は実技試験あり" }},
+            { label: "一般", date: "2026-02-13", note:{
+            appweb:"2025年12月1日(月)～2026年2月5日(木)23:59",
+            appmo:"2025年12月1日(月)～2026年2月5日(木)23:59/15,000円",
+            appsho:"2025年12月1日～2026年2月5日(木)/入学願書･個人調査書(･欠席理由書)",
+            testhi:"国数英(リスニングなし)｜各50分100点",
+            testme:"なし",
+            testoth:"音楽科･美術科は実技試験あり" }}
+          ],
+          policy: {slide:"あり。",
+                  admission:"欠席30日未満（30日以上は理由書）",
+                  acceptance:"",
+                  etc:"一般合格者の納付金は公立入学時に返還。"
+          }
+        },
+        courses: [
+          { name: "普通科 プログレッシブS（PS）", description: "週37時間授業＋放課後講座。国公立大・難関私大を目指す。語学研修・Global Studies参加可。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "普通科 アスリートS（AS）", description: "特別講座と体育系強化クラブの両立。国公立大・難関私大を目指す。語学研修・Global Studies参加可。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "普通科 個性探求コース（G）", description: "個性を活かした学習活動。基礎学力と自己表現を重視。" ,
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "音楽科", description: "音楽系大学進学を目指す。冬期芸術教室（11/15(土)、参加必須）で実技免除認定あり。" ,  
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          },
+          { name: "美術科", description: "美術系大学進学を目指す。冬期芸術教室で実技免除認定あり。" , 
+            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+          }
+        ],
+        details: {
+          access: "",
+          dormitory: "",
+          tuition: "",
+          support: "単願入学試験：12/1(月)～1/14(水) WEB出願。一般入学試験：12/1(月)～2/5(木) WEB出願※地方試験場は12/1(月)～1/20(火)。特別奨学生（単願のみ）：学力・クラブ・芸術分野で申請可能。クラブ・芸術の申請書は中学校に送付。冬期芸術教室優秀者は実技免除。大谷予備門（放課後・土曜・長期休暇）で大学受験指導。ELST・オンライン英会話あり。",
+          achievements: "",
+          features: "募集定員：普通科250名、音楽科30名、美術科40名（内部進学含む）。大学受験対策プログラム：Sグレード（医学部・旧帝大・早慶上智）、Aグレード（国公私立大）。Global Studies Program：海外一流大生と議論。"
+        ,
+      governance: "",
+      recruitment: ""}
+      }
+    );
 
+
+    // 東海大学付属札幌高等学校（句読点・表記修正）
+schools.push(
+  {
+    id: "tokai-univ-sapporo-hs",
+    name: "東海大学付属札幌高等学校",
+    color: "#8B5CF6",
+    type: "私立（附属）",
+    gender: "共学", // ★TODO
+    website: "",
+    highlights: [
+      "推薦・1月単願（1/16）、2月単願・一般（2/13）",
+      "スライド合格あり（1月単願のスライド者は2月一般で特別進学コース再チャレンジ可）",
+      "総合進学／特別進学の2コース制",
+      "東海大学の附属校"
+    ],
+    admissions: {
+      rounds: [
+        {
+          label: "推薦・1月単願",
+          date: "2026-01-16",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "推薦：面接／1月単願：国数英（各30分・各50点）",
+            testme: "推薦：あり※受験生のみ／1月単願：なし",
+            testoth: "スライド合格あり（2月一般で特別進学コース再チャレンジ試験受験可）"
+          }
+        },
+        {
+          label: "2月単願・一般",
+          date: "2026-02-13",
+          note: {
+            appweb: "",
+            appmo: "",
+            appsho: "",
+            testhi: "国数英理社（各50分・各100点）",
+            testme: "—",
+            testoth: "スライド合格あり／プレテストなし"
+          }
+        }
+      ],
+      policy: {
+        slide: "あり（1月単願スライド者は2月一般で特別進学コース再チャレンジ可）。",
+        admission: "併願に関する特記事項は未記載。",
+        acceptance: "合格ライン：未公表。",
+        etc: "プレテスト：なし。"
+      }
+    },
+    courses: [
+      {
+        name: "特別進学コース",
+        description: "国公立大学・難関私立大学への進学を目指す進学重視カリキュラム。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "" }
+        ]
+      },
+      {
+        name: "総合進学コース",
+        description: "文武両道を実践。東海大学への推薦制度あり。",
+        admission_criteria: [
+          { name: "出願基準・目安", recomendation: "", general: "" }
+        ]
+      }
+    ],
+    details: {
+      access: "",
+      dormitory: "",
+      tuition: "",
+      support: [
+        "部活動奨励奨学金：1種=年24万円×3年／2種=年12万円×3年／3種=年19万円×1年／4種=年95,000円×1年。",
+        "対象部：野球・男女バスケットボール・男女バレーボール・陸上競技・剣道・男女柔道・スキー・サッカー・吹奏楽。",
+        "野球部は出身中学校長の推薦書が必要。"
+      ].join("</br>"),
+      achievements: "",
+      features: [
+        "東海大学オリジナル授業や高大一貫講座、総合的な探究の時間を設置。",
+        "自らコースを作り上げる研修旅行を実施。",
+        "東海大学への推薦制度、中期留学（インターナショナルカレッジ）可。"
+      ].join("</br>"),
+      governance: "東海大学の附属校。全国の附属校・キャンパスとのネットワーク。",
+      recruitment: "募集定員280名（特別進学80名／総合進学200名）。今年度入学者・合格基準の方針：未記載。"
+    }
+  }
+);
     
     schools.push(
       {
