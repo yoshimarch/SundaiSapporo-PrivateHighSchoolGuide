@@ -110,6 +110,9 @@
       <h3 class="text-xl font-semibold text-gray-700 mb-2">該当する学校が見つかりませんでした</h3>
       <p class="text-gray-500">検索条件やタグを変更してお試しください</p>
     </div>
+    <div class="map-container">
+      <iframe src="https://www.google.com/maps/d/embed?mid=1irt-CyTLtTg6tCvObaCUafdc15TFhCI&hl=ja&ehbc=2E312F" width="100%" height="480" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
   </main>
 
   <footer class="bg-white border-t mt-16">
@@ -133,7 +136,7 @@
         color: "#992299",
         type: "私立",
         gender: "女子校", // ★TODO
-        website: "",
+        website: "https://www.fuji-gjshs.jp/",
         highlights: [
           "専願・一般ともに面接実施（寄宿生は保護者同伴）",
           "スライド合格制度あり（特別進学↔総合進学）",
@@ -179,9 +182,14 @@
           }
         ],
         details: {
-          access: "",
-          dormitory: "",
-          tuition: "",
+          access: ["地下鉄南北線「北18条駅」徒歩５分",
+          　　　　　"地下鉄東豊線「北13条東駅」徒歩９分",
+          　　　　　"中央バス「北15条西1」バス停"
+          　　　　　].join("<br>"),
+          dormitory: "あり",
+          tuition: ["入学金：250,000円",
+                    "授業料等月額：41,850円"
+                  ].join("<br>"),
           support: "学習段階に応じた指導、先輩・卒業生から学ぶ機会、英作文・小論文・面接の個別指導、国公立二次対策講習・添削、特待給付制度あり。特待は出願時に希望選択、一般入試成績が極めて優秀な者に入学金相当25万円給付。",
           achievements: "2024年度：主要国公立17名（北海道大・弘前大・札幌医科大など）。道外私大は慶應・上智・東京理科大など。約7割が指定校（慶応義塾、明治、立教、中央大など）・姉妹校推薦・公募推薦・総合型等の年内入試。",
           features: "生徒の声：自由で優しい・自習しやすい・校舎が綺麗。高1は6か年とHRが別、高2からHR混合（授業は別）で文理分岐。高3では理系Ⅰ、Ⅱ、Ⅲと文系Ⅰ、Ⅱに分かれる。姉妹校の藤女子大学は受験料無料、天使大学ほか姉妹校推薦あり。"
@@ -200,7 +208,7 @@
         color: "#DC2626",
         type: "私立",
         gender: "共学", // ★TODO
-        website: "",
+        website: "https://www.s-ohtani.ed.jp/",
         highlights: [
           "単願入試（面接重視＋学力点検）と一般入試を実施",
           "普通科はPS・AS（学力重点）とG（個性探求）に分かれる",
@@ -232,27 +240,31 @@
         },
         courses: [
           { name: "普通科 プログレッシブS（PS）", description: "週37時間授業＋放課後講座。国公立大・難関私大を目指す。語学研修・Global Studies参加可。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"合格ライン(取扱注意)", recomendation: "中３の５教科 20以上", general: "中３の５教科 22以上" }]
           },
           { name: "普通科 アスリートS（AS）", description: "特別講座と体育系強化クラブの両立。国公立大・難関私大を目指す。語学研修・Global Studies参加可。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"合格ライン(取扱注意)", recomendation: "中３の５教科 20以上", general: "中３の５教科 22以上" }]
           },
           { name: "普通科 個性探求コース（G）", description: "個性を活かした学習活動。基礎学力と自己表現を重視。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"合格ライン(取扱注意)", recomendation: "中３の５教科 15以上", general: "中３の５教科 17以上" }]
           },
           { name: "音楽科", description: "音楽系大学進学を目指す。冬期芸術教室（11/15(土)、参加必須）で実技免除認定あり。" ,  
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"合格ライン(取扱注意)", recomendation: "中３の５教科 15以上かつ実技免除認定", general: "中３の５教科 17以上かつ実技免除認定" }]
           },
           { name: "美術科", description: "美術系大学進学を目指す。冬期芸術教室で実技免除認定あり。" , 
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"合格ライン(取扱注意)", recomendation: "中３の５教科 15以上かつ実技免除認定", general: "中３の５教科 17以上かつ実技免除認定" }]
           }
         ],
         details: {
-          access: "",
-          dormitory: "",
-          tuition: "",
+          access: ["地下鉄東豊線「東区役所前駅」徒歩５分",
+　　　　　　　　　　 "中央バス「大谷学園前」バス停"
+          ].join("<br>"),
+          dormitory: "男子寮あり",
+          tuition: ["入学金：180,000円",
+            　　　   "授業料等月額：49,700円(普通科の場合)"
+          ].join("<br>"),
           support: "単願入学試験：12/1(月)～1/14(水) WEB出願。一般入学試験：12/1(月)～2/5(木) WEB出願※地方試験場は12/1(月)～1/20(火)。特別奨学生（単願のみ）：学力・クラブ・芸術分野で申請可能。クラブ・芸術の申請書は中学校に送付。冬期芸術教室優秀者は実技免除。大谷予備門（放課後・土曜・長期休暇）で大学受験指導。ELST・オンライン英会話あり。",
-          achievements: "",
+          achievements: "道外含む国公立大学(京都大学、北海道大学、室蘭工業大学など)や私立大学（慶應義塾大学、同志社大学、中央大学、東洋大学、北海学園大学、北星学園大学など）に多数合格。札幌大谷大学への系列校推薦制度で30人以上が進学。",
           features: "募集定員：普通科250名、音楽科30名、美術科40名（内部進学含む）。大学受験対策プログラム：Sグレード（医学部・旧帝大・早慶上智）、Aグレード（国公私立大）。Global Studies Program：海外一流大生と議論。"
         ,
       governance: "",
@@ -269,7 +281,7 @@ schools.push(
     color: "#8B5CF6",
     type: "私立（附属）",
     gender: "共学", // ★TODO
-    website: "",
+    website: "https://www.sapporo.tokai.ed.jp/",
     highlights: [
       "推薦・1月単願（1/16）、2月単願・一般（2/13）",
       "スライド合格あり（1月単願のスライド者は2月一般で特別進学コース再チャレンジ可）",
@@ -282,9 +294,9 @@ schools.push(
           label: "推薦・1月単願",
           date: "2026-01-16",
           note: {
-            appweb: "",
-            appmo: "",
-            appsho: "",
+            appweb: "2025年12月1日(月)～2026年1月6日(火)",
+            appmo: "2025年12月1日(月)～2026年1月6日(火)｜15,000円",
+            appsho: "2026年1月6日(火)～2026年1月9日(金)",
             testhi: "推薦：面接／1月単願：国数英（各30分・各50点）",
             testme: "推薦：あり※受験生のみ／1月単願：なし",
             testoth: "スライド合格あり（2月一般で特別進学コース再チャレンジ試験受験可）"
@@ -294,11 +306,11 @@ schools.push(
           label: "2月単願・一般",
           date: "2026-02-13",
           note: {
-            appweb: "",
-            appmo: "",
-            appsho: "",
+            appweb: "2025年12月1日(月)～2026年1月27日(火)",
+            appmo: "2025年12月1日(月)～2026年1月27日(火)｜15,000円",
+            appsho: "2026年1月27日(火)～2026年2月5日(木)",
             testhi: "国数英理社（各50分・各100点）",
-            testme: "—",
+            testme: "面接",
             testoth: "スライド合格あり／プレテストなし"
           }
         }
@@ -315,27 +327,29 @@ schools.push(
         name: "特別進学コース",
         description: "国公立大学・難関私立大学への進学を目指す進学重視カリキュラム。",
         admission_criteria: [
-          { name: "出願基準・目安", recomendation: "", general: "" }
+          { name: "", recomendation: "", general: "" }
         ]
       },
       {
         name: "総合進学コース",
         description: "文武両道を実践。東海大学への推薦制度あり。",
         admission_criteria: [
-          { name: "出願基準・目安", recomendation: "", general: "" }
+          { name: "", recomendation: "", general: "" }
         ]
       }
     ],
     details: {
-      access: "",
-      dormitory: "",
-      tuition: "",
+      access: "じょうてつバス「藻岩小学校駅前」バス停/「藻南公園」バス停/「東海大学前」バス停",
+      dormitory: "運動部(条件あり)の男子のみ寮あり",
+      tuition: ["入学金：272,000円",
+                "授業料等月額：38,600円"
+      ].join("<br>"),
       support: [
         "部活動奨励奨学金：1種=年24万円×3年／2種=年12万円×3年／3種=年19万円×1年／4種=年95,000円×1年。",
         "対象部：野球・男女バスケットボール・男女バレーボール・陸上競技・剣道・男女柔道・スキー・サッカー・吹奏楽。",
         "野球部は出身中学校長の推薦書が必要。"
       ].join("</br>"),
-      achievements: "",
+      achievements: "東海大学に約100名合格、私立大学(中央大学、北海学園大学、北海道医療大学など)に多数合格、国公立合格者も(小樽商科大学、北海道教育大学など)",
       features: [
         "東海大学オリジナル授業や高大一貫講座、総合的な探究の時間を設置。",
         "自らコースを作り上げる研修旅行を実施。",
@@ -354,7 +368,7 @@ schools.push(
         color: "#0F766E",
         type: "私立",
         gender: "共学", // ★TODO
-        website: "",
+        website: "https://www.sapporonichidai.ed.jp/high/",
         highlights: [
           "推薦Ⅰ～Ⅲ、一般、帰国生・外国人入試を実施",
           "SSH・SGH指定校、探究活動が充実",
@@ -400,24 +414,26 @@ schools.push(
         },
         courses: [
           { name: "プレミアSコース", description: "最難関大を目指す。入試当日点のみで合否判定。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"出願基準", recomendation: "推薦Ⅰ：256以上　推薦Ⅲ：276以上", general: "" }]
           },
           { name: "特進コース", description: "国公立大・有名私大を目指す。SSH・SGH探究活動あり。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"出願基準", recomendation: "推薦Ⅰ：256以上　推薦Ⅲ：276以上", general: "" }]
           },
           { name: "総合進学コース", description: "基礎学力と部活動・自己表現を重視。推薦Ⅱ単願対象。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"出願基準", recomendation: "推薦Ⅱ：236以上", general: "" }]
           },
           { name: "国際バカロレア（IB）コース", description: "英語面接あり。国際的大学進学を視野に。募集50名。" ,
-            admission_criteria: [{ name:"出願基準", recomendation: "", general: "" }]
+            admission_criteria: [{ name:"出願基準", recomendation: "推薦Ⅰ：256以上　推薦Ⅲ：276以上", general: "" }]
           }
         ],
         details: {
-          access: "",
+          access: "JR「上野幌駅」徒歩3分（別途スクールバスあり）",
           dormitory: "あり",
-          tuition: "",
-          support: "学習特待：A370点以上（入学金＋授業料全額）、B350-369点（入学金＋授業料半額）。部活特待：A全額、B半額。東西南北特待（札幌東西南北合格者対象）：入学金＋授業料全額。",
-          achievements: "",
+          tuition: ["入学金：266,000円",
+                    "授業料等月額：45,200円"
+          ].join("<br>"),
+          support: ["学習特待：A370点以上（入学金＋授業料全額）、B350-369点（入学金＋授業料半額）。","部活特待：A全額、B半額。","東西南北特待（札幌東西南北合格者対象）：入学金＋授業料全額。"].join("<br>"),
+          achievements: "東京大学を含む難関国立大学への現役合格実績あり。有名私立大学(早稲田大学、明治大学、北海学園大学など)へ多数合格。日本大学系列にも進学可。",
           features: "募集定員364名（PS25・特進169・総合120・IB50）。2025年度入学者375名。強化指定クラブ（野球・サッカー・剣道・柔道・男子バスケ・スキー・陸上長距離・吹奏楽）は学習点に配慮あり（推薦Ⅱ単願）。未来創造力を育む研究（SSH,SGH,総合的な探求の時間）。校長：浅利剛之。附属推薦・国公立併願あり。"
         ,
       governance: "",
@@ -429,10 +445,10 @@ schools.push(
       {
         id: "hokusei-joshi-hs",
         name: "北星学園女子高等学校",
-        color: "#7C3AED",
+        color: "#11eeff",
         type: "私立",
         gender: "女子校", // ★TODO
-        website: "",
+        website: "https://www.hokusei-ghs-jh.ed.jp/",
         highlights: [
           "専願（1/17）・一般（2/17）入試を実施",
           "4コース制（Academic・Pioneer・Globalist・Music）",
@@ -478,8 +494,10 @@ schools.push(
           }
         ],
         details: {
-          access: "",
-          dormitory: "",
+          access:   ["地下鉄東西線「西18丁目駅」徒歩8分",
+                     "市電「西15丁目」徒歩10分/「西線6条」徒歩8分"
+          ].join("<br>"),
+          dormitory: "あり",
           tuition: "",
           support: "第2希望制度あり。合格点に届かなくても条件付きで他コースに合格判定される仕組み。",
           achievements: "",
@@ -1526,91 +1544,6 @@ schools.push(
   }
 );
 
-// 東海大学付属札幌高等学校（句読点・表記修正）
-schools.push(
-  {
-    id: "tokai-univ-sapporo-hs",
-    name: "東海大学付属札幌高等学校",
-    color: "#8B5CF6",
-    type: "私立（附属）",
-    gender: "共学", // ★TODO
-    website: "",
-    highlights: [
-      "推薦・1月単願（1/16）、2月単願・一般（2/13）",
-      "スライド合格あり（1月単願のスライド者は2月一般で特別進学コース再チャレンジ可）",
-      "総合進学／特別進学の2コース制",
-      "東海大学の附属校"
-    ],
-    admissions: {
-      rounds: [
-        {
-          label: "推薦・1月単願",
-          date: "2026-01-16",
-          note: {
-            appweb: "",
-            appmo: "",
-            appsho: "",
-            testhi: "推薦：面接／1月単願：国数英（各30分・各50点）",
-            testme: "推薦：あり※受験生のみ／1月単願：なし",
-            testoth: "スライド合格あり（2月一般で特別進学コース再チャレンジ試験受験可）"
-          }
-        },
-        {
-          label: "2月単願・一般",
-          date: "2026-02-13",
-          note: {
-            appweb: "",
-            appmo: "",
-            appsho: "",
-            testhi: "国数英理社（各50分・各100点）",
-            testme: "—",
-            testoth: "スライド合格あり／プレテストなし"
-          }
-        }
-      ],
-      policy: {
-        slide: "あり（1月単願スライド者は2月一般で特別進学コース再チャレンジ可）。",
-        admission: "併願に関する特記事項は未記載。",
-        acceptance: "合格ライン：未公表。",
-        etc: "プレテスト：なし。"
-      }
-    },
-    courses: [
-      {
-        name: "特別進学コース",
-        description: "国公立大学・難関私立大学への進学を目指す進学重視カリキュラム。",
-        admission_criteria: [
-          { name: "出願基準・目安", recomendation: "", general: "" }
-        ]
-      },
-      {
-        name: "総合進学コース",
-        description: "文武両道を実践。東海大学への推薦制度あり。",
-        admission_criteria: [
-          { name: "出願基準・目安", recomendation: "", general: "" }
-        ]
-      }
-    ],
-    details: {
-      access: "",
-      dormitory: "",
-      tuition: "",
-      support: [
-        "部活動奨励奨学金：1種=年24万円×3年／2種=年12万円×3年／3種=年19万円×1年／4種=年95,000円×1年。",
-        "対象部：野球・男女バスケットボール・男女バレーボール・陸上競技・剣道・男女柔道・スキー・サッカー・吹奏楽。",
-        "野球部は出身中学校長の推薦書が必要。"
-      ].join("</br>"),
-      achievements: "",
-      features: [
-        "東海大学オリジナル授業や高大一貫講座、総合的な探究の時間を設置。",
-        "自らコースを作り上げる研修旅行を実施。",
-        "東海大学への推薦制度、中期留学（インターナショナルカレッジ）可。"
-      ].join("</br>"),
-      governance: "東海大学の附属校。全国の附属校・キャンパスとのネットワーク。",
-      recruitment: "募集定員280名（特別進学80名／総合進学200名）。今年度入学者・合格基準の方針：未記載。"
-    }
-  }
-);
 
     // -----------------------------
     // 2) タグ（自動＋手動）
